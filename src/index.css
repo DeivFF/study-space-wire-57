@@ -1,0 +1,136 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+
+@layer base {
+  :root {
+    --background: 0 0% 96%;
+    --foreground: 0 0% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+
+    --primary: 212 72% 59%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 212 72% 53%;
+
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 167 72% 60%;
+    --accent-foreground: 0 0% 20%;
+    --accent-hover: 167 72% 54%;
+
+    --destructive: 353 98% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-hover: 353 98% 37%;
+
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 212 72% 59%;
+
+    --radius: 0.75rem;
+
+    --success: 134 61% 41%;
+    --error: 353 98% 41%;
+    --warning: 37 91% 55%;
+    --info: 167 72% 60%;
+
+    /* Revisões específicas */
+    --review-gradient: linear-gradient(135deg, hsl(212 72% 59%), hsl(262 83% 58%));
+    --review-success: 134 61% 41%;
+    --review-warning: 37 91% 55%;
+    --review-danger: 353 98% 41%;
+    --review-easy: 134 61% 41%;
+    --review-medium: 37 91% 55%;
+    --review-hard: 353 98% 41%;
+
+    --sidebar-background: 0 0% 96%;
+
+    --sidebar-foreground: 0 0% 20%;
+
+    --sidebar-primary: 212 72% 59%;
+
+    --sidebar-primary-foreground: 0 0% 100%;
+
+    --sidebar-accent: 167 72% 60%;
+
+    --sidebar-accent-foreground: 0 0% 20%;
+
+    --sidebar-border: 0 0% 80%;
+
+    --sidebar-ring: 212 72% 59%;
+  }
+
+  .dark {
+    --background: 0 0% 20%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 20%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 20%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 212 72% 59%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 212 72% 53%;
+
+
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 167 72% 60%;
+    --accent-foreground: 0 0% 20%;
+    --accent-hover: 167 72% 54%;
+
+    --destructive: 353 98% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-hover: 353 98% 37%;
+
+    --border: 0 0% 30%;
+    --input: 0 0% 30%;
+    --ring: 212 72% 59%;
+    --sidebar-background: 0 0% 20%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 212 72% 59%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 167 72% 60%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 0 0% 30%;
+    --sidebar-ring: 212 72% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1 {
+    @apply text-h1 font-bold;
+  }
+
+  h2 {
+    @apply text-h2 font-bold;
+  }
+
+  h3 {
+    @apply text-h3 font-semibold;
+  }
+
+  p {
+    @apply text-body;
+  }
+}

@@ -1,0 +1,4 @@
+project_id = "gxlwvupyxadbbmmnumkq"
+
+[functions.intelligent-review]
+verify_jwt = true
