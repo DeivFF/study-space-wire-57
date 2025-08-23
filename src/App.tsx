@@ -14,6 +14,7 @@ import Amigos from "./pages/Amigos";
 import SalaEstudo from "./pages/SalaEstudo";
 import Comunidades from "./pages/Comunidades";
 import Feed from "./pages/Feed";
+import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -66,6 +67,11 @@ const App = () => (
             <Route path="/feed" element={
               <ProtectedRoute>
                 <Feed />
+              </ProtectedRoute>
+            } />
+            <Route path="/perfil/:id" element={
+              <ProtectedRoute>
+                <Perfil />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

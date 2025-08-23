@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Headphones, Plus, BookOpen, Beaker, Calculator, Users, Layers, Upload, Ellipsis } from 'lucide-react';
 
 interface RightSidebarProps {
@@ -31,6 +32,7 @@ interface Suggestion {
 export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -132,9 +134,15 @@ export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
                             </a>
                           </li>
                           <li>
-                            <a href="#" className="block px-4 py-2 text-sm text-app-text hover:bg-app-muted">
+                            <button 
+                              onClick={() => {
+                                navigate(`/perfil/${friend.id}`);
+                                setOpenMenuId(null);
+                              }}
+                              className="block w-full text-left px-4 py-2 text-sm text-app-text hover:bg-app-muted"
+                            >
                               Ver perfil
-                            </a>
+                            </button>
                           </li>
                         </ul>
                       </div>
