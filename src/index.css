@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Original semantic tokens */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Extended tokens for the study app */
+    --app-bg: 238 100% 98%;
+    --app-bg-soft: 0 0% 100%;
+    --app-panel: 0 0% 100%;
+    --app-muted: 220 14% 96%;
+    --app-border: 214 20% 91%;
+    --app-text: 220 13% 9%;
+    --app-text-muted: 215 14% 34%;
+    --app-accent: 234 89% 74%;
+    --app-accent-2: 199 100% 50%;
+    --app-success: 140 40% 40%;
+    --app-warning: 45 93% 47%;
+    --app-danger: 4 90% 58%;
+    --app-shadow: 218 50% 15%;
+    --app-radius: 14px;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--app-bg)), hsl(var(--app-muted)));
+  }
+
+  .dark {
+    /* Original dark tokens */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Extended dark tokens */
+    --app-bg: 222 47% 4%;
+    --app-bg-soft: 221 39% 11%;
+    --app-panel: 222 47% 4%;
+    --app-muted: 217 33% 17%;
+    --app-border: 217 33% 17%;
+    --app-text: 213 31% 91%;
+    --app-text-muted: 215 20% 65%;
+    --app-accent: 217 91% 70%;
+    --app-accent-2: 199 89% 60%;
+    --app-success: 140 50% 55%;
+    --app-warning: 45 93% 58%;
+    --app-danger: 4 90% 70%;
+    --app-shadow: 0 0% 0%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
