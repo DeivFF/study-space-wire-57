@@ -1,0 +1,318 @@
+/* StudyPost - Design baseado em postagem.html */
+.study-post-card {
+  @apply bg-white border border-[#e2e7f0] rounded-2xl overflow-hidden mb-4;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.study-post-card:hover {
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.12);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .study-post-card {
+    @apply rounded-xl mx-2;
+  }
+  
+  .study-post-content {
+    @apply p-3;
+  }
+  
+  .study-post-header {
+    @apply p-2;
+  }
+  
+  .study-avatar {
+    @apply w-8 h-8;
+  }
+  
+  .study-interaction-btn {
+    @apply px-2 py-1 text-xs;
+  }
+}
+
+.study-post-header {
+  @apply p-3 border-b border-[#e2e7f0] flex items-center gap-2;
+  color: #5e6470;
+}
+
+.study-post-content {
+  @apply p-[14px];
+}
+
+.study-author-section {
+  @apply flex items-center gap-3 mb-3;
+}
+
+.study-avatar {
+  @apply w-10 h-10 rounded-full bg-[#f1f3f8] grid place-items-center font-bold text-[#12131a];
+}
+
+.study-author-meta {
+  @apply flex-1;
+}
+
+.study-author-name {
+  @apply font-semibold text-[#12131a] flex items-center gap-2;
+}
+
+.study-post-time {
+  @apply text-xs text-[#5e6470];
+}
+
+.study-more-btn {
+  @apply text-[#5e6470] hover:text-[#12131a] transition-colors;
+}
+
+.study-post-text {
+  @apply mb-4 leading-relaxed text-[#12131a];
+}
+
+.study-post-text p {
+  @apply mb-3;
+}
+
+.study-post-text .font-bold {
+  @apply font-semibold;
+}
+
+.study-interaction-bar {
+  @apply flex items-center gap-2 py-2 border-t border-[#e2e7f0];
+}
+
+.study-interaction-btn {
+  @apply flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer text-[#5e6470] text-sm transition-all duration-200;
+  border: none;
+  background: none;
+}
+
+.study-interaction-btn:hover {
+  @apply bg-[#f1f3f8] text-[#12131a];
+  transform: translateY(-1px);
+}
+
+.study-interaction-btn:focus {
+  @apply outline-none ring-2 ring-[#2962ff] ring-opacity-30 bg-[#f1f3f8];
+}
+
+.study-interaction-btn:active {
+  transform: translateY(0);
+}
+
+.study-interaction-btn.liked {
+  @apply text-[#2962ff];
+}
+
+.study-counters {
+  @apply flex items-center gap-3 text-xs text-[#5e6470] mt-2;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#e2e7f0] bg-[#f6f7fb] text-xs;
+}
+
+.confirm-btn {
+  @apply mt-2.5 px-3 py-2 bg-[#2962ff] text-white border-none rounded-lg cursor-pointer text-sm transition-all duration-200;
+}
+
+.confirm-btn:hover {
+  @apply bg-[#1e4ed8];
+  transform: translateY(-1px);
+}
+
+.confirm-btn:focus {
+  @apply outline-none ring-2 ring-[#2962ff] ring-opacity-50;
+}
+
+.confirm-btn:active {
+  transform: translateY(0);
+}
+
+.muted {
+  @apply text-[#5e6470];
+}
+
+/* Comment System Styles */
+.study-comments-section {
+  @apply mt-4 pt-4 border-t border-[#e2e7f0];
+}
+
+.study-comments-list {
+  @apply space-y-3 mb-4;
+}
+
+.study-comment {
+  @apply flex gap-3;
+}
+
+.study-comment-avatar {
+  @apply w-8 h-8 rounded-full bg-[#f1f3f8] grid place-items-center font-bold text-[#12131a] text-sm flex-shrink-0;
+}
+
+.study-comment-content {
+  @apply flex-1;
+}
+
+.study-comment-author {
+  @apply font-semibold text-[#12131a] text-sm;
+}
+
+.study-comment-text {
+  @apply text-sm text-[#12131a] mt-1 leading-relaxed;
+}
+
+.study-comment-actions {
+  @apply flex items-center gap-3 mt-2;
+}
+
+.study-comment-action-btn {
+  @apply flex items-center gap-1 text-xs text-[#5e6470] hover:text-[#12131a] cursor-pointer transition-colors;
+}
+
+.study-replies {
+  @apply ml-4 mt-3 pt-3 border-l-2 border-[#f1f3f8] pl-3;
+}
+
+.study-comment-form {
+  @apply space-y-3;
+}
+
+.study-comment-textarea {
+  @apply w-full p-3 border border-[#e2e7f0] rounded-lg resize-none focus:outline-none focus:border-[#2962ff] transition-colors;
+}
+
+.study-comment-form-actions {
+  @apply flex justify-between items-center;
+}
+
+.study-format-buttons {
+  @apply flex items-center gap-1;
+}
+
+.study-format-btn {
+  @apply p-1.5 text-[#5e6470] hover:text-[#12131a] hover:bg-[#f1f3f8] rounded transition-colors;
+}
+
+.study-comment-submit-btn {
+  @apply px-4 py-2 bg-[#2962ff] text-white rounded-lg text-sm font-medium hover:bg-[#1e4ed8] transition-colors;
+}
+
+.study-replying-to {
+  @apply flex justify-between items-center p-2 bg-[#f6f7fb] rounded-lg mb-2;
+}
+
+.study-replying-to-text {
+  @apply text-sm text-[#5e6470];
+}
+
+.study-replying-to-cancel {
+  @apply text-[#5e6470] hover:text-[#12131a] transition-colors;
+}
+
+/* Dark mode support */
+.dark .study-post-card {
+  @apply bg-[#0e1014] border-[#222633];
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.dark .study-post-header {
+  @apply border-[#222633];
+  color: #a2a8b5;
+}
+
+.dark .study-avatar {
+  @apply bg-[#141823] text-[#e6e7eb];
+}
+
+.dark .study-author-name {
+  @apply text-[#e6e7eb];
+}
+
+.dark .study-post-time {
+  @apply text-[#a2a8b5];
+}
+
+.dark .study-post-text {
+  @apply text-[#e6e7eb];
+}
+
+.dark .study-interaction-bar {
+  @apply border-[#222633];
+}
+
+.dark .study-interaction-btn {
+  @apply text-[#a2a8b5];
+}
+
+.dark .study-interaction-btn:hover {
+  @apply bg-[#141823] text-[#e6e7eb];
+}
+
+.dark .study-interaction-btn.liked {
+  @apply text-[#6ea8fe];
+}
+
+.dark .study-counters {
+  @apply text-[#a2a8b5];
+}
+
+.dark .chip {
+  @apply border-[#222633] bg-[#141823] text-[#a2a8b5];
+}
+
+.dark .confirm-btn {
+  @apply bg-[#6ea8fe];
+}
+
+.dark .confirm-btn:hover {
+  @apply bg-[#5a8cfe];
+}
+
+.dark .muted {
+  @apply text-[#a2a8b5];
+}
+
+.dark .study-comments-section {
+  @apply border-[#222633];
+}
+
+.dark .study-comment-avatar {
+  @apply bg-[#141823] text-[#e6e7eb];
+}
+
+.dark .study-comment-author {
+  @apply text-[#e6e7eb];
+}
+
+.dark .study-comment-text {
+  @apply text-[#e6e7eb];
+}
+
+.dark .study-comment-action-btn {
+  @apply text-[#a2a8b5] hover:text-[#e6e7eb];
+}
+
+.dark .study-replies {
+  @apply border-[#141823];
+}
+
+.dark .study-comment-textarea {
+  @apply border-[#222633] bg-[#141823] text-[#e6e7eb] focus:border-[#6ea8fe];
+}
+
+.dark .study-format-btn {
+  @apply text-[#a2a8b5] hover:text-[#e6e7eb] hover:bg-[#141823];
+}
+
+.dark .study-comment-submit-btn {
+  @apply bg-[#6ea8fe] hover:bg-[#5a8cfe];
+}
+
+.dark .study-replying-to {
+  @apply bg-[#141823];
+}
+
+.dark .study-replying-to-text {
+  @apply text-[#a2a8b5];
+}
