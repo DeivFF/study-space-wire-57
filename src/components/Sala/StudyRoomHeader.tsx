@@ -97,8 +97,6 @@ export function StudyRoomHeader({ roomName, roomCode, isDark, onToggleTheme, onC
       <InviteModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
-        roomName={roomName}
-        roomCode={roomCode}
         currentMembers={currentMembers || []}
       />
     </>

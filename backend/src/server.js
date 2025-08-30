@@ -71,6 +71,7 @@ app.use('/api/posts', postsRoutes);
 app.use('/api/conversations', conversationsRoutes);
 app.use('/api/questions', questionsRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/rooms', require('./routes/rooms'));
 
 // 404 handler
 app.use('*', (req, res) => {

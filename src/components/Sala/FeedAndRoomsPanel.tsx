@@ -113,7 +113,7 @@ export function FeedAndRoomsPanel({
         )}
 
         {/* Rooms Tab */}
-        <TabsContent value="rooms" className="p-2 lg:p-3 flex flex-col flex-1 m-0 min-h-0" forceMount={!showActivities}>
+        <TabsContent value="rooms" className="p-2 lg:p-3 flex flex-col flex-1 m-0 min-h-0">{/* Removed forceMount */}
           {/* Filters */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3">
             <ToggleGroup 
