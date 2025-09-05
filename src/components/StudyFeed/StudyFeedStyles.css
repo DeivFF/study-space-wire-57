@@ -1,0 +1,438 @@
+/* Study Feed Styles - Based on the provided design */
+
+/* Design tokens */
+:root {
+  --study-bg: hsl(var(--app-bg));
+  --study-bg-soft: hsl(var(--app-bg-soft));
+  --study-panel: hsl(var(--app-panel));
+  --study-muted: hsl(var(--app-muted));
+  --study-border: hsl(var(--app-border));
+  --study-text: hsl(var(--app-text));
+  --study-text-muted: hsl(var(--app-text-muted));
+  --study-accent: hsl(var(--app-accent));
+  --study-accent-2: hsl(var(--app-accent-2));
+  --study-success: hsl(var(--app-success));
+  --study-warning: hsl(var(--app-warning));
+  --study-danger: hsl(var(--app-danger));
+  --study-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --study-radius: var(--app-radius);
+}
+
+.dark {
+  --study-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Utility classes */
+.bold {
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.text-sm {
+  font-size: 12px;
+}
+
+.muted {
+  color: var(--study-text-muted);
+}
+
+/* Main wrapper */
+.study-feed-wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 14px;
+  margin-top: 14px;
+}
+
+/* Post card */
+.study-post-card {
+  background: var(--study-bg-soft);
+  border: 1px solid var(--study-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--study-shadow);
+  margin-bottom: 16px;
+}
+
+.study-post-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--study-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--study-text);
+}
+
+.study-post-content {
+  padding: 14px;
+}
+
+/* Author section */
+.study-author-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.study-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--study-muted);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: var(--study-text);
+}
+
+.study-author-meta {
+  flex: 1;
+}
+
+.study-author-name {
+  font-weight: 600;
+  color: var(--study-text);
+}
+
+.study-post-time {
+  font-size: 12px;
+  color: var(--study-text-muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--study-border);
+  background: var(--study-bg);
+  font-size: 12px;
+  color: var(--study-text);
+}
+
+.confirm-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--study-accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.confirm-btn:hover {
+  filter: brightness(1.1);
+}
+
+.confirm-btn:active {
+  transform: translateY(1px);
+}
+
+.study-more-btn {
+  border: none;
+  background: transparent;
+  color: var(--study-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.study-more-btn:hover {
+  background: var(--study-muted);
+  color: var(--study-text);
+}
+
+/* Post content */
+.study-post-text {
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: var(--study-text);
+}
+
+/* Interaction bar */
+.study-interaction-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--study-border);
+}
+
+.study-interaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--study-text-muted);
+  font-size: 13px;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+}
+
+.study-interaction-btn:hover {
+  background: var(--study-muted);
+  color: var(--study-text);
+}
+
+.study-interaction-btn.liked {
+  color: var(--study-danger);
+}
+
+/* Counters */
+.study-counters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--study-text-muted);
+  margin-top: 8px;
+}
+
+/* Comments section */
+.study-comments-section {
+  margin-top: 16px;
+  border-top: 1px solid var(--study-border);
+  padding-top: 16px;
+}
+
+.study-comments-list {
+  margin-bottom: 16px;
+}
+
+/* Comment */
+.study-comment {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.study-comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--study-muted);
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+  color: var(--study-text);
+}
+
+.study-comment-content {
+  flex: 1;
+}
+
+.study-comment-author {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--study-text);
+}
+
+.study-comment-text {
+  font-size: 14px;
+  margin: 4px 0;
+  line-height: 1.4;
+  color: var(--study-text);
+}
+
+.study-comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.study-comment-action-btn {
+  font-size: 12px;
+  color: var(--study-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.study-comment-action-btn:hover {
+  color: var(--study-text);
+}
+
+/* Replies */
+.study-replies {
+  margin-left: 42px;
+  margin-top: 12px;
+  border-left: 2px solid var(--study-border);
+  padding-left: 10px;
+}
+
+/* Comment form */
+.study-comment-form {
+  margin-top: 16px;
+}
+
+.study-comment-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--study-border);
+  border-radius: 10px;
+  background: var(--study-bg-soft);
+  color: var(--study-text);
+  resize: vertical;
+  min-height: 60px;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.study-comment-textarea::placeholder {
+  color: var(--study-text-muted);
+}
+
+.study-comment-textarea:focus {
+  outline: 2px solid var(--study-accent);
+  outline-offset: -2px;
+}
+
+.study-comment-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.study-format-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.study-format-btn {
+  border: none;
+  background: transparent;
+  color: var(--study-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.study-format-btn:hover {
+  background: var(--study-muted);
+  color: var(--study-text);
+}
+
+.study-comment-submit-btn {
+  background: var(--study-accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.study-comment-submit-btn:hover {
+  filter: brightness(1.1);
+}
+
+.study-comment-submit-btn:active {
+  transform: translateY(1px);
+}
+
+/* Replying to indicator */
+.study-replying-to {
+  background: var(--study-muted);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.study-replying-to-text {
+  font-size: 13px;
+  color: var(--study-text-muted);
+}
+
+.study-replying-to-cancel {
+  cursor: pointer;
+  color: var(--study-text-muted);
+  border: none;
+  background: transparent;
+  padding: 2px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.study-replying-to-cancel:hover {
+  background: var(--study-border);
+  color: var(--study-text);
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+  .study-feed-wrap {
+    padding: 8px;
+  }
+  
+  .study-comment {
+    gap: 8px;
+  }
+  
+  .study-comment-avatar, .study-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .study-replies {
+    margin-left: 32px;
+    padding-left: 8px;
+  }
+  
+  .study-post-content {
+    padding: 12px;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}

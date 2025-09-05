@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Design tokens baseados no meu-perfil.html */
+    --background: 215 20% 97%; /* #f6f7fb */
+    --foreground: 220 18% 8%; /* #12131a */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 220 18% 8%; /* #12131a */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 220 18% 8%; /* #12131a */
+    
+    /* Primary color - azul CTA suave conforme solicitado */
+    --primary: 218 100% 50%; /* #2962ff - cor CTA */
+    --primary-foreground: 0 0% 100%; /* #ffffff */
+    
+    --secondary: 220 29% 95%; /* #f1f3f8 */
+    --secondary-foreground: 220 18% 8%; /* #12131a */
+    --muted: 220 29% 95%; /* #f1f3f8 */
+    --muted-foreground: 218 12% 40%; /* #5e6470 */
+    --accent: 198 100% 50%; /* #00b8ff - accent-2 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 4 84% 51%; /* #d93025 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 22% 89%; /* #e2e7f0 */
+    --input: 225 22% 89%; /* #e2e7f0 */
+    --ring: 218 100% 50%; /* #2962ff */
+    --radius: 14px; /* Mantendo do design original */
+    
+    /* Sidebar tokens */
+    --sidebar-background: 215 20% 97%;
+    --sidebar-foreground: 220 18% 8%;
+    --sidebar-primary: 218 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 29% 95%;
+    --sidebar-accent-foreground: 220 18% 8%;
+    --sidebar-border: 225 22% 89%;
+    --sidebar-ring: 218 100% 50%;
+
+    /* Tokens específicos do Study Space baseados no meu-perfil.html */
+    --app-bg: 215 20% 97%; /* #f6f7fb */
+    --app-bg-soft: 0 0% 100%; /* #ffffff */
+    --app-panel: 0 0% 100%; /* #ffffff */
+    --app-muted: 220 29% 95%; /* #f1f3f8 */
+    --app-border: 225 22% 89%; /* #e2e7f0 */
+    --app-text: 220 18% 8%; /* #12131a */
+    --app-text-muted: 218 12% 40%; /* #5e6470 */
+    --app-accent: 218 100% 50%; /* #2962ff - cor CTA principal */
+    --app-accent-2: 198 100% 50%; /* #00b8ff - cor CTA secundária */
+    --app-success: 140 71% 32%; /* #1e8e3e */
+    --app-warning: 45 100% 36%; /* #ba8b00 */
+    --app-danger: 4 84% 51%; /* #d93025 */
+    --app-shadow: 218 50% 15%;
+    --app-radius: 14px;
+
+    /* Gradients baseados nas cores do meu-perfil.html */
+    --gradient-primary: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--app-bg)), hsl(var(--app-muted)));
+  }
+
+  .dark {
+    /* Tokens dark mode baseados no meu-perfil.html */
+    --background: 222 25% 4%; /* #0b0c0f */
+    --foreground: 220 12% 90%; /* #e6e7eb */
+    --card: 222 24% 6%; /* #0e1014 */
+    --card-foreground: 220 12% 90%; /* #e6e7eb */
+    --popover: 222 24% 6%; /* #0e1014 */
+    --popover-foreground: 220 12% 90%; /* #e6e7eb */
+    
+    /* Primary color - azul CTA ajustado para dark mode */
+    --primary: 217 98% 70%; /* #6ea8fe - azul mais claro para dark */
+    --primary-foreground: 222 25% 4%;
+    
+    --secondary: 223 24% 11%; /* #141823 */
+    --secondary-foreground: 220 12% 90%; /* #e6e7eb */
+    --muted: 223 24% 11%; /* #141823 */
+    --muted-foreground: 219 14% 71%; /* #a2a8b5 */
+    --accent: 199 100% 75%; /* #8bd3ff - accent-2 ajustado */
+    --accent-foreground: 222 25% 4%;
+    --destructive: 4 100% 68%; /* #ff6b6b */
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 24% 20%; /* #222633 */
+    --input: 225 24% 20%; /* #222633 */
+    --ring: 217 98% 70%; /* #6ea8fe */
+    
+    /* Sidebar dark tokens */
+    --sidebar-background: 222 25% 4%;
+    --sidebar-foreground: 220 12% 90%;
+    --sidebar-primary: 217 98% 70%;
+    --sidebar-primary-foreground: 222 25% 4%;
+    --sidebar-accent: 223 24% 11%;
+    --sidebar-accent-foreground: 220 12% 90%;
+    --sidebar-border: 225 24% 20%;
+    --sidebar-ring: 217 98% 70%;
+
+    /* Tokens dark específicos do Study Space */
+    --app-bg: 222 25% 4%; /* #0b0c0f */
+    --app-bg-soft: 221 17% 7%; /* #111318 */
+    --app-panel: 222 24% 6%; /* #0e1014 */
+    --app-muted: 223 24% 11%; /* #141823 */
+    --app-border: 225 24% 20%; /* #222633 */
+    --app-text: 220 12% 90%; /* #e6e7eb */
+    --app-text-muted: 219 14% 71%; /* #a2a8b5 */
+    --app-accent: 217 98% 70%; /* #6ea8fe - CTA principal dark */
+    --app-accent-2: 199 100% 75%; /* #8bd3ff - CTA secundária dark */
+    --app-success: 140 54% 60%; /* #56d364 */
+    --app-warning: 45 100% 50%; /* #ffb300 */
+    --app-danger: 4 100% 68%; /* #ff6b6b */
+    --app-shadow: 0 0% 0%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.35;
+  }
+  
+  /* Utility classes baseadas no meu-perfil.html */
+  .gradient-primary {
+    background: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+  }
+  
+  .btn-cta {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    background: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+    color: white;
+    font-weight: 600;
+  }
+  
+  .shadow-study {
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  }
+  
+  .dark .shadow-study {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}

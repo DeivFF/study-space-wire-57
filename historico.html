@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Histórico – Flashcards & Exercícios</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        container: { center: true, padding: '1rem', screens: { '2xl': '1400px' } },
+        extend: {
+          colors: {
+            border: 'hsl(var(--border))',
+            input: 'hsl(var(--input))',
+            ring: 'hsl(var(--ring))',
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+            secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+            muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+            accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+            card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+            app: {
+              bg: 'hsl(var(--app-bg))',
+              'bg-soft': 'hsl(var(--app-bg-soft))',
+              panel: 'hsl(var(--app-panel))',
+              muted: 'hsl(var(--app-muted))',
+              border: 'hsl(var(--app-border))',
+              text: 'hsl(var(--app-text))',
+              'text-muted': 'hsl(var(--app-text-muted))',
+              accent: 'hsl(var(--app-accent))',
+              'accent-2': 'hsl(var(--app-accent-2))',
+              success: 'hsl(var(--app-success))',
+              warning: 'hsl(var(--app-warning))',
+              danger: 'hsl(var(--app-danger))'
+            }
+          },
+          borderRadius: { lg: '14px', md: '12px', sm: '10px' }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root { /* Claro */
+      --background: 215 20% 97%; --foreground: 220 18% 8%;
+      --card: 0 0% 100%; --card-foreground: 220 18% 8%;
+      --primary: 218 100% 50%; --primary-foreground: 0 0% 100%;
+      --secondary: 220 29% 95%; --secondary-foreground: 220 18% 8%;
+      --muted: 220 29% 95%; --muted-foreground: 218 12% 40%;
+      --accent: 198 100% 50%; --accent-foreground: 0 0% 100%;
+      --border: 225 22% 89%; --input: 225 22% 89%; --ring: 218 100% 50%;
+      --app-bg: 215 20% 97%; --app-bg-soft: 0 0% 100%; --app-panel: 0 0% 100%;
+      --app-muted: 220 29% 95%; --app-border: 225 22% 89%;
+      --app-text: 220 18% 8%; --app-text-muted: 218 12% 40%;
+      --app-accent: 218 100% 50%; --app-accent-2: 198 100% 50%;
+      --app-success: 140 71% 32%; --app-warning: 45 100% 36%; --app-danger: 4 84% 51%;
+    }
+    .dark { /* Escuro */
+      --background: 222 25% 4%; --foreground: 220 12% 90%;
+      --card: 222 24% 6%; --card-foreground: 220 12% 90%;
+      --primary: 217 98% 70%; --primary-foreground: 222 25% 4%;
+      --secondary: 223 24% 11%; --secondary-foreground: 220 12% 90%;
+      --muted: 223 24% 11%; --muted-foreground: 219 14% 71%;
+      --accent: 199 100% 75%; --accent-foreground: 222 25% 4%;
+      --border: 225 24% 20%; --input: 225 24% 20%; --ring: 217 98% 70%;
+      --app-bg: 222 25% 4%; --app-bg-soft: 221 17% 7%; --app-panel: 222 24% 6%;
+      --app-muted: 223 24% 11%; --app-border: 225 24% 20%;
+      --app-text: 220 12% 90%; --app-text-muted: 219 14% 71%;
+      --app-success: 140 54% 60%; --app-warning: 45 100% 50%; --app-danger: 4 100% 68%;
+    }
+    body{font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;}
+    .btn-cta{background: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2))); color:#fff; font-weight:600}
+    .badge{display:inline-flex; align-items:center; gap:.375rem; padding:.125rem .5rem; font-size:.75rem; border-radius:999px; border:1px solid hsl(var(--app-border)); background:hsl(var(--app-bg)); color:hsl(var(--app-text))}
+    .pill{padding:.25rem .5rem; border:1px solid hsl(var(--app-border)); border-radius:999px; font-size:.75rem}
+    .grade-0{background:hsl(var(--app-danger)/.12)}
+    .grade-3{background:hsl(var(--app-warning)/.12)}
+    .grade-4{background:hsl(var(--app-accent)/.12)}
+    .grade-5{background:hsl(var(--app-success)/.12)}
+  </style>
+</head>
+<body class="min-h-full bg-background text-foreground">
+  <div class="container max-w-6xl py-6">
+    <!-- Header -->
+    <div class="flex items-center gap-2 mb-4 px-2">
+      <div class="text-lg font-semibold text-app-text">Histórico – Flashcards & Exercícios</div>
+      <div class="flex-1"></div>
+      <button id="toggleTheme" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" title="Alternar tema">
+        <i data-lucide="moon" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div class="bg-app-bg-soft border border-app-border rounded-2xl shadow-sm overflow-hidden">
+      <!-- Controls -->
+      <section class="p-4 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="list-checks" class="w-5 h-5"></i><span class="font-semibold">Resumo</span></div>
+            <div class="space-y-1 text-sm">
+              <div class="flex justify-between"><span class="text-app-text-muted">Registros</span><span id="stTotal">0</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Acerto (geral)</span><span id="stAcc">—</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">EF médio (flashcards)</span><span id="stEF">—</span></div>
+            </div>
+          </div>
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="calendar-range" class="w-5 h-5"></i><span class="font-semibold">Período</span></div>
+            <div class="flex flex-wrap gap-2 text-sm">
+              <input type="date" id="dateStart" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text"/>
+              <input type="date" id="dateEnd" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text"/>
+              <button class="pill" data-range="today">Hoje</button>
+              <button class="pill" data-range="7">7 dias</button>
+              <button class="pill" data-range="30">30 dias</button>
+              <button class="pill" data-range="all">Tudo</button>
+            </div>
+          </div>
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="sliders" class="w-5 h-5"></i><span class="font-semibold">Filtros</span></div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <input id="search" placeholder="Buscar pergunta/tags/ref…" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text col-span-2" />
+              <select id="filterKind" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text">
+                <option value="all">Conteúdo: Todos</option>
+                <option value="flashcard">Flashcards</option>
+                <option value="exercise">Exercícios</option>
+              </select>
+              <select id="filterTipo" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text">
+                <option value="all">Tipo: Todos</option>
+                <option value="conceito">Conceito</option>
+                <option value="definição">Definição</option>
+                <option value="caso">Caso</option>
+                <option value="mcq">Múltipla escolha</option>
+                <option value="essay">Dissertativo</option>
+              </select>
+              <select id="filterGrade" class="px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text">
+                <option value="all">Resultado/Nota</option>
+                <option value="5">Certo / Fácil (5)</option>
+                <option value="4">Bom (4)</option>
+                <option value="3">Difícil (3)</option>
+                <option value="0">Errado (0–2)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btnExportJSON" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="download" class="w-4 h-4"></i>Exportar JSON</button>
+          <button id="btnExportCSV" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="table" class="w-4 h-4"></i>Exportar CSV</button>
+          <div class="flex-1"></div>
+          <button id="btnClear" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-destructive text-destructive hover:bg-app-muted"><i data-lucide="trash-2" class="w-4 h-4"></i>Limpar histórico</button>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden lg:block border border-app-border rounded-xl overflow-hidden">
+          <div class="flex items-center px-3 py-2.5 text-xs text-app-text-muted border-b border-app-border bg-app-muted">
+            <div class="w-10 text-center"><input id="chkAll" type="checkbox" class="accent-[hsl(var(--app-accent))]" /></div>
+            <div class="w-[120px] text-center">Conteúdo</div>
+            <div class="w-[180px]">Data</div>
+            <div class="flex-1 min-w-0">Pergunta</div>
+            <div class="w-[140px] text-center">Tipo</div>
+            <div class="w-[160px] text-center">Resultado/Nota</div>
+            <div class="w-[200px] text-center">Meta</div>
+            <div class="w-[140px] text-center">Ações</div>
+          </div>
+          <div id="histRowsDesktop"></div>
+        </div>
+
+        <!-- Mobile cards -->
+        <div id="histRowsMobile" class="lg:hidden"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- VIEW ENTRY MODAL -->
+  <div id="viewModal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black/50" id="viewBackdrop"></div>
+    <div class="relative w-[95vw] sm:w-[90vw] max-w-2xl max-h-[90vh] overflow-y-auto bg-card text-card-foreground rounded-2xl border border-app-border">
+      <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-app-border bg-app-panel">
+        <div class="flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i><span class="font-semibold">Detalhes</span></div>
+        <button id="btnCloseView" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="x" class="w-4 h-4"></i>Fechar</button>
+      </div>
+      <div class="p-4 space-y-4">
+        <div class="text-sm text-app-text-muted" id="vDate">—</div>
+        <div class="text-lg font-semibold" id="vPerg">Pergunta…</div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="badge" id="vKind">—</span>
+          <span class="badge" id="vTipo">—</span>
+          <div id="vTags" class="flex flex-wrap gap-1"></div>
+          <span class="text-xs text-app-text-muted">Ref.: <span id="vRef">—</span></span>
+        </div>
+
+        <!-- Flashcard-only -->
+        <div id="fcBox" class="space-y-3 hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="border border-app-border rounded-lg p-3">
+              <div class="text-xs text-app-text-muted">Antes</div>
+              <div class="text-sm" id="vBefore">—</div>
+            </div>
+            <div class="border border-app-border rounded-lg p-3">
+              <div class="text-xs text-app-text-muted">Depois</div>
+              <div class="text-sm" id="vAfter">—</div>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge" id="vGrade">Nota: —</span>
+            <span class="badge" id="vDue">Próx. revisão: —</span>
+            <span class="badge hidden" id="vUndone">Desfeito</span>
+            <div class="flex-1"></div>
+            <button id="btnUndo" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>Desfazer</button>
+          </div>
+          <div class="border-t border-app-border pt-3 text-sm">
+            <div class="font-semibold mb-1">Resposta curta</div>
+            <div id="vRespCurta" class="text-sm"></div>
+          </div>
+          <div class="text-sm">
+            <div class="font-semibold mb-1">Resposta aprofundada</div>
+            <div id="vRespProf" class="text-sm"></div>
+          </div>
+        </div>
+
+        <!-- Exercise-only -->
+        <div id="exBox" class="space-y-3 hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="border border-app-border rounded-lg p-3">
+              <div class="text-xs text-app-text-muted">Resultado</div>
+              <div class="text-sm" id="xResult">—</div>
+            </div>
+            <div class="border border-app-border rounded-lg p-3">
+              <div class="text-xs text-app-text-muted">Tempo</div>
+              <div class="text-sm" id="xTime">—</div>
+            </div>
+            <div class="border border-app-border rounded-lg p-3">
+              <div class="text-xs text-app-text-muted">Dificuldade</div>
+              <div class="text-sm" id="xDiff">—</div>
+            </div>
+          </div>
+          <div id="xMcqBox" class="space-y-2 hidden">
+            <div class="text-sm"><span class="font-semibold">Sua resposta:</span> <span id="xAns">—</span></div>
+            <div class="text-sm"><span class="font-semibold">Gabarito:</span> <span id="xCor">—</span></div>
+            <div class="text-sm" id="xOpts">—</div>
+          </div>
+          <div id="xEssayBox" class="space-y-2 hidden">
+            <div class="text-sm"><span class="font-semibold">Sua resposta (trecho):</span> <span id="xEssay">—</span></div>
+            <div class="text-sm"><span class="font-semibold">Pontos esperados:</span> <span id="xKey">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Utilities & state ======
+    const byId = (id)=>document.getElementById(id);
+    const qsa = (s,el=document)=>Array.from(el.querySelectorAll(s));
+    const now = ()=>Date.now();
+    const fmtDate = (ts)=> new Date(ts).toLocaleString();
+    const fmtDue = (ts)=> ts? new Date(ts).toLocaleDateString() : '—';
+    const fmtTime = (s)=>{ s=Math.max(0,Math.round(s)); const m=String(Math.floor(s/60)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); return `${m}:${ss}` };
+
+    const LS_HISTORY = 'flashcards-history-v1';
+    const LS_CARDS = 'flashcards-bank-v1';
+    const LS_THEME = 'flashcards-theme';
+
+    let history = loadHistory();
+    let cards = loadCards();
+    let viewing = null;
+
+    // Mock se vazio
+    if(!history.length){ seedMockData(); history = loadHistory(); }
+
+    function loadHistory(){ try{ const raw = localStorage.getItem(LS_HISTORY); return raw? JSON.parse(raw):[] }catch(e){ return [] } }
+    function saveHistory(){ localStorage.setItem(LS_HISTORY, JSON.stringify(history)); }
+    function loadCards(){ try{ const raw = localStorage.getItem(LS_CARDS); return raw? JSON.parse(raw):[] }catch(e){ return [] } }
+
+    function seedMockData(){
+      const base = Date.now();
+      const fc1 = { id: crypto.randomUUID(), tipo:'conceito', pergunta:'O que é **controle difuso** de constitucionalidade?', respostaCurta:'Qualquer juiz/tribunal afasta a lei no caso concreto.', respostaAprofundada:'É exercido incidentalmente; efeitos inter partes, salvo modulação pelo STF.', referencia:'CF/88, art. 97; STF.', tags:['constitucional','controle'], srs:{ef:2.5,reps:0,ivl:0,due:base+3*86400000} };
+      const fc2 = { id: crypto.randomUUID(), tipo:'definição', pergunta:'Defina **pregão eletrônico**.', respostaCurta:'Modalidade para bens/serviços comuns com lances online.', respostaAprofundada:'Busca maior competitividade e transparência; rege-se pelo Decreto 10.024/2019 e Lei 14.133/2021.', referencia:'Lei 14.133/2021; Dec. 10.024/2019.', tags:['licitações','administração'] };
+      const fc3 = { id: crypto.randomUUID(), tipo:'caso', pergunta:'Servidor divulga logomarca pessoal em obra pública. Viola impessoalidade?', respostaCurta:'Sim, promoção pessoal vedada.', respostaAprofundada:'A CF/88 veda símbolos que caracterizem promoção pessoal de autoridades.', referencia:'CF/88, art. 37, §1º.', tags:['impessoalidade','caso'] };
+      // garantir que cartões existam
+      const cardsSeed = [fc1,fc2,fc3];
+      const curCards = loadCards();
+      if(!curCards.length){ localStorage.setItem(LS_CARDS, JSON.stringify(cardsSeed)); cards = cardsSeed; }
+
+      const H=[]; // histórico misto
+      // Flashcards (diversas notas)
+      H.push(entryFlash(fc1, base-60*60*1000, 5, {ef:2.5,reps:0,ivl:0,due:base+2*86400000}));
+      H.push(entryFlash(fc2, base-5*60*60*1000, 3, {ef:2.3,reps:1,ivl:1,due:base+1*86400000}));
+      H.push(entryFlash(fc3, base-26*60*60*1000, 0, {ef:2.0,reps:0,ivl:1,due:base+1*86400000}));
+
+      // Exercícios (MCQ e Dissertativo)
+      H.push(entryExercise({
+        ts: base-2*60*60*1000,
+        pergunta:'Nos termos da Lei 14.133/2021, qual o critério do **menor preço**?',
+        tipo:'mcq',
+        options:['Preço global','Preço unitário quando previsto','Maior desconto','Técnica e preço sempre'],
+        correctIndex:1,
+        chosenIndex:1,
+        result:true,
+        elapsedSec:48,
+        tags:['licitações'],
+        referencia:'Lei 14.133/2021',
+        dificuldade:'médio'
+      }));
+      H.push(entryExercise({
+        ts: base-3*24*60*60*1000,
+        pergunta:'Explique o princípio da **impessoalidade** e a vedação de promoção pessoal.',
+        tipo:'essay',
+        answerText:'Finalidade pública; vedação de autopromoção; art. 37.',
+        keyPoints:'Definição, CF/88 art. 37, finalidade pública, proibição de nomes/símbolos pessoais.',
+        score:0.8,
+        result:true,
+        elapsedSec:180,
+        tags:['constitucional'],
+        referencia:'CF/88, art. 37',
+        dificuldade:'difícil'
+      }));
+      H.push(entryExercise({
+        ts: base-6*24*60*60*1000,
+        pergunta:'Qual é o **princípio** que impõe publicidade dos atos?',
+        tipo:'mcq',
+        options:['Legalidade','Publicidade','Eficiência','Moralidade'],
+        correctIndex:1,
+        chosenIndex:0,
+        result:false,
+        elapsedSec:22,
+        tags:['constitucional'],
+        referencia:'CF/88, art. 37',
+        dificuldade:'fácil'
+      }));
+
+      localStorage.setItem(LS_HISTORY, JSON.stringify(H));
+    }
+
+    function entryFlash(card, ts, grade, before){
+      const after = calcAfter(before, grade);
+      return {
+        id: crypto.randomUUID(), kind:'flashcard', ts, cardId: card.id,
+        pergunta: card.pergunta, tipo: card.tipo, tags: card.tags, ref: card.referencia,
+        grade, before, after,
+        card: { respostaCurta: card.respostaCurta, respostaAprofundada: card.respostaAprofundada }
+      };
+    }
+    function calcAfter(before, q){
+      const s = { ef: before?.ef??2.5, reps: before?.reps??0, ivl: before?.ivl??0, due: before?.due??(now()+86400000) };
+      if(q<3){ s.reps=0; s.ivl=1; s.due = now()+86400000; }
+      else {
+        s.ef = s.ef + (0.1 - (5-q)*(0.08 + (5-q)*0.02)); if(s.ef<1.3) s.ef=1.3;
+        s.reps += 1; if(s.reps===1) s.ivl=1; else if(s.reps===2) s.ivl=6; else s.ivl=Math.round(s.ivl*s.ef);
+        s.due = now()+s.ivl*86400000;
+      }
+      return s;
+    }
+
+    function entryExercise(o){
+      return {
+        id: crypto.randomUUID(), kind:'exercise', ts: o.ts,
+        exerciseId: crypto.randomUUID(), sessionId: crypto.randomUUID(),
+        pergunta: o.pergunta, tipo: o.tipo, tags: o.tags||[], ref: o.referencia||'',
+        dificuldade: o.dificuldade||'médio',
+        // normaliza nota (5 certo, 0 errado; essays podem virar 4 se score>=0.7)
+        grade: o.tipo==='essay' ? (o.score>=0.7?4:3) : (o.result?5:0),
+        result: o.result, elapsedSec: o.elapsedSec||0,
+        options: o.options||null, correctIndex: o.correctIndex??null, chosenIndex: o.chosenIndex??null,
+        answerText: o.answerText||'', keyPoints: o.keyPoints||''
+      };
+    }
+
+    // ====== Theme ======
+    initTheme();
+    function initTheme(){ if(localStorage.getItem(LS_THEME)==='dark') document.documentElement.classList.add('dark') }
+    function toggleTheme(){ const r=document.documentElement; r.classList.toggle('dark'); localStorage.setItem(LS_THEME, r.classList.contains('dark')?'dark':'light'); }
+    byId('toggleTheme').addEventListener('click', toggleTheme);
+
+    // ====== Filters ======
+    function filteredHistory(){
+      const term = byId('search').value.trim().toLowerCase();
+      const fKind = byId('filterKind').value;
+      const fTipo = byId('filterTipo').value;
+      const fGrade = byId('filterGrade').value;
+      const dStart = byId('dateStart').value? new Date(byId('dateStart').value+' 00:00').getTime(): null;
+      const dEnd = byId('dateEnd').value? new Date(byId('dateEnd').value+' 23:59:59').getTime(): null;
+
+      return history.filter(h=>{
+        const inTerm = !term || [h.pergunta, h.ref, (h.tags||[]).join(',')].join(' ').toLowerCase().includes(term);
+        const inKind = (fKind==='all') || (h.kind===fKind);
+        const inTipo = (fTipo==='all') || (h.tipo===fTipo);
+        const inGrade = (fGrade==='all') || (fGrade==='0' ? (h.grade<=2) : (String(h.grade)===fGrade));
+        const inStart = !dStart || h.ts>=dStart;
+        const inEnd = !dEnd || h.ts<=dEnd;
+        return inTerm && inKind && inTipo && inGrade && inStart && inEnd;
+      }).sort((a,b)=> b.ts - a.ts);
+    }
+
+    // ====== Render ======
+    function render(){
+      const arr = filteredHistory();
+      // Stats
+      byId('stTotal').textContent = arr.length;
+      const correctCount = arr.filter(x=> (x.kind==='flashcard' ? x.grade>=3 : x.grade>=4 || x.grade===5)).length;
+      byId('stAcc').textContent = arr.length? Math.round(correctCount/arr.length*100)+'%' : '—';
+      const onlyFc = arr.filter(x=>x.kind==='flashcard');
+      const efAvg = avg(onlyFc.map(x=> (x.after?.ef || x.before?.ef) || null ));
+      byId('stEF').textContent = efAvg? efAvg.toFixed(2) : '—';
+
+      // Desktop
+      const desk = byId('histRowsDesktop'); desk.innerHTML='';
+      arr.forEach(h=>{
+        const row = document.createElement('div'); row.className='flex items-center px-3 py-2.5 border-b border-app-border hover:bg-app-muted';
+        row.innerHTML = `
+          <div class="w-10 text-center"><input type="checkbox" class="rowChk accent-[hsl(var(--app-accent))]" data-id="${h.id}"></div>
+          <div class="w-[120px] text-center text-xs"><span class="badge">${h.kind==='flashcard'?'Flashcard':'Exercício'}</span></div>
+          <div class="w-[180px] text-xs text-app-text-muted">${fmtDate(h.ts)}</div>
+          <div class="flex-1 min-w-0 pr-3">
+            <div class="font-semibold text-app-text truncate">${escapeHtml(h.pergunta||'—')}</div>
+            <div class="text-xs text-app-text-muted truncate">${(h.tags||[]).join(', ')}</div>
+          </div>
+          <div class="w-[140px] text-center text-sm capitalize">${escapeHtml(h.tipo||'—')}</div>
+          <div class="w-[160px] text-center">${renderBadge(h)}</div>
+          <div class="w-[200px] text-center text-sm">${escapeHtml(metaText(h))}</div>
+          <div class="w-[140px] flex justify-center gap-1">
+            <button class="px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" title="Ver" data-act="view" data-id="${h.id}"><i data-lucide="eye" class="w-4 h-4"></i></button>
+            <button class="px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" title="Excluir" data-act="delete" data-id="${h.id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>`;
+        desk.appendChild(row);
+      });
+
+      // Mobile
+      const mob = byId('histRowsMobile'); mob.innerHTML='';
+      arr.forEach(h=>{
+        const card = document.createElement('div'); card.className='px-3 py-3 border-b border-app-border hover:bg-app-muted';
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="mt-0.5"><input type="checkbox" class="rowChk accent-[hsl(var(--app-accent))]" data-id="${h.id}"></div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs text-app-text-muted">${fmtDate(h.ts)} • <span class="capitalize">${escapeHtml(h.tipo||'—')}</span> • <span>${h.kind==='flashcard'?'Flashcard':'Exercício'}</span></div>
+              <div class="font-semibold text-sm text-app-text">${escapeHtml(h.pergunta||'—')}</div>
+              <div class="flex items-center gap-2 text-xs text-app-text-muted mt-1">
+                ${renderBadge(h)}
+                <span class="truncate">${escapeHtml(metaText(h))}</span>
+              </div>
+              <div class="flex flex-wrap gap-1 mt-2 text-xs">${(h.tags||[]).map(t=>`<span class='badge'>${escapeHtml(t)}</span>`).join(' ')}</div>
+              <div class="flex gap-2 mt-2">
+                <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-act="view" data-id="${h.id}"><i data-lucide="eye" class="w-4 h-4"></i>Ver</button>
+                <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-act="delete" data-id="${h.id}"><i data-lucide="trash-2" class="w-4 h-4"></i>Excluir</button>
+              </div>
+            </div>
+          </div>`;
+        mob.appendChild(card);
+      });
+
+      // actions
+      qsa('[data-act="view"]').forEach(b=> b.addEventListener('click', ()=> openViewer(b.getAttribute('data-id'))));
+      qsa('[data-act="delete"]').forEach(b=> b.addEventListener('click', ()=> deleteEntry(b.getAttribute('data-id'))));
+
+      lucide.createIcons();
+    }
+
+    function renderBadge(h){
+      if(h.kind==='flashcard'){
+        const cls = gradeClass(h.grade); const txt = labelGrade(h.grade);
+        return `<span class="badge grade-${cls}">${txt}</span>`;
+      } else {
+        if(h.tipo==='mcq'){
+          const cls = h.grade===5?5:0; const txt = h.grade===5? 'Certo' : 'Errado';
+          return `<span class="badge grade-${cls}">${txt}</span>`;
+        } else { // essay
+          const cls = h.grade>=4?4:3; const txt = h.grade>=4? 'Bom' : 'Difícil';
+          return `<span class="badge grade-${cls}">${txt}</span>`;
+        }
+      }
+    }
+
+    function metaText(h){
+      if(h.kind==='flashcard') return 'Próx. revisão: '+fmtDue((h.after?.due)||(h.before?.due));
+      const t = 'Tempo '+fmtTime(h.elapsedSec||0);
+      return h.tipo==='mcq'? t : (t + (h.score? ` • Score ${(h.score*100).toFixed(0)}%` : ''));
+    }
+
+    function deleteEntry(id){ history = history.filter(h=>h.id!==id); saveHistory(); render(); }
+
+    // ====== View modal ======
+    const viewModal = byId('viewModal');
+    function openViewer(id){
+      const h = history.find(x=>x.id===id); if(!h) return;
+      viewing = h;
+      byId('vDate').textContent = fmtDate(h.ts);
+      byId('vPerg').textContent = h.pergunta || '—';
+      byId('vKind').textContent = h.kind==='flashcard'?'Flashcard':'Exercício';
+      byId('vTipo').textContent = h.tipo || '—';
+      const tagsHost = byId('vTags'); tagsHost.innerHTML=''; (h.tags||[]).forEach(t=>{ const s=document.createElement('span'); s.className='badge'; s.textContent=t; tagsHost.appendChild(s); });
+      byId('vRef').textContent = h.ref || '—';
+
+      // switch UI
+      if(h.kind==='flashcard'){
+        const curCard = (h.card) || (cards.find(x=>x.id===h.cardId) || {});
+        byId('vBefore').textContent = srsText(h.before);
+        byId('vAfter').textContent = srsText(h.after);
+        byId('vGrade').textContent = 'Nota: '+labelGrade(h.grade);
+        byId('vDue').textContent = 'Próx. revisão: '+fmtDue((h.after?.due)||null);
+        byId('vUndone').classList.add('hidden');
+        byId('vRespCurta').textContent = curCard.respostaCurta || '—';
+        byId('vRespProf').textContent = curCard.respostaAprofundada || '—';
+        byId('btnUndo').onclick = ()=> undoHistory(h.id);
+        byId('fcBox').classList.remove('hidden');
+        byId('exBox').classList.add('hidden');
+      } else {
+        // exercise
+        byId('fcBox').classList.add('hidden');
+        byId('exBox').classList.remove('hidden');
+        // hide undo (não se aplica)
+        byId('btnUndo').onclick = null;
+        // fill boxes
+        byId('xResult').textContent = (h.tipo==='mcq'? (h.grade===5?'Certo':'Errado') : (h.grade>=4?'Bom':'Difícil'));
+        byId('xTime').textContent = fmtTime(h.elapsedSec||0);
+        byId('xDiff').textContent = (h.dificuldade||'—');
+        if(h.tipo==='mcq'){
+          byId('xMcqBox').classList.remove('hidden');
+          byId('xEssayBox').classList.add('hidden');
+          const opts = h.options||[]; const label = (i)=> i!=null && i>=0 && i<opts.length ? `${String.fromCharCode(65+i)}. ${opts[i]}` : '—';
+          byId('xAns').textContent = label(h.chosenIndex);
+          byId('xCor').textContent = label(h.correctIndex);
+          byId('xOpts').innerHTML = opts.length? ('Opções: '+opts.map((o,i)=>`${String.fromCharCode(65+i)}. ${o}`).join(' | ')) : '';
+        } else {
+          byId('xMcqBox').classList.add('hidden');
+          byId('xEssayBox').classList.remove('hidden');
+          byId('xEssay').textContent = (h.answerText||'—').slice(0,240)+(h.answerText&&h.answerText.length>240?'…':'');
+          byId('xKey').textContent = h.keyPoints||'—';
+        }
+      }
+
+      viewModal.classList.remove('hidden'); viewModal.classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeViewer(){ viewModal.classList.add('hidden'); viewModal.classList.remove('flex'); viewing=null; }
+    byId('btnCloseView').addEventListener('click', closeViewer);
+    byId('viewBackdrop').addEventListener('click', closeViewer);
+
+    // ====== Helpers ======
+    function labelGrade(g){ if(g>=5) return 'Fácil (5)'; if(g===4) return 'Bom (4)'; if(g===3) return 'Difícil (3)'; return 'Errado (0–2)'; }
+    function gradeClass(g){ if(g>=5) return 5; if(g===4) return 4; if(g===3) return 3; return 0; }
+    function srsText(s){ if(!s) return '—'; return `EF ${Number(s.ef||0).toFixed(2)} • reps ${s.reps||0} • ivl ${s.ivl||0}d`; }
+    function avg(arr){ const v=arr.filter(x=>Number.isFinite(Number(x))); if(!v.length) return null; return v.reduce((a,b)=>a+Number(b),0)/v.length; }
+    function escapeHtml(s=''){ return s.replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;","&gt;":"&gt;","\"":"&quot;"}[m])) }
+
+    // ====== Export ======
+    byId('btnExportJSON').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(filteredHistory(), null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='historico_estudos.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    byId('btnExportCSV').addEventListener('click', ()=>{
+      const cols=['id','kind','ts','pergunta','tipo','tags','ref','grade','ef_before','ivl_before','reps_before','ef_after','ivl_after','reps_after','due_after','result','elapsedSec','correctIndex','chosenIndex','score'];
+      const head = cols.join(',');
+      const rows = filteredHistory().map(h=>[
+        h.id,
+        h.kind,
+        new Date(h.ts).toISOString(),
+        csv(h.pergunta||''),
+        h.tipo||'',
+        csv((h.tags||[]).join('|')),
+        csv(h.ref||''),
+        h.grade??'',
+        h.kind==='flashcard'?(h.before?.ef??''):'', h.kind==='flashcard'?(h.before?.ivl??''):'', h.kind==='flashcard'?(h.before?.reps??''):'',
+        h.kind==='flashcard'?(h.after?.ef??''):'', h.kind==='flashcard'?(h.after?.ivl??''):'', h.kind==='flashcard'?(h.after?.reps??''):'', h.kind==='flashcard'?(h.after?.due? new Date(h.after.due).toISOString():''):'',
+        h.kind==='exercise'?(h.result??''):'', h.kind==='exercise'?(h.elapsedSec??''):'', h.kind==='exercise'?(h.correctIndex??''):'', h.kind==='exercise'?(h.chosenIndex??''):'', h.kind==='exercise'?(h.score??''):''
+      ].join(','));
+      const text = [head, ...rows].join('\n');
+      const blob = new Blob([text], {type:'text/csv'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='historico_estudos.csv'; a.click(); URL.revokeObjectURL(url);
+    });
+    function csv(s){ return '"'+String(s).replace(/"/g,'""')+'"'; }
+
+    // ====== Range chips ======
+    qsa('[data-range]').forEach(b=> b.addEventListener('click', ()=>{
+      const r = b.getAttribute('data-range');
+      const d = new Date();
+      if(r==='today'){
+        byId('dateStart').valueAsDate = d; byId('dateEnd').valueAsDate = d;
+      } else if(r==='7'){
+        const d2 = new Date(Date.now()-6*86400000); byId('dateStart').valueAsDate=d2; byId('dateEnd').valueAsDate=d;
+      } else if(r==='30'){
+        const d2 = new Date(Date.now()-29*86400000); byId('dateStart').valueAsDate=d2; byId('dateEnd').valueAsDate=d;
+      } else { byId('dateStart').value=''; byId('dateEnd').value=''; }
+      render();
+    }));
+
+    // ====== Clear ======
+    byId('btnClear').addEventListener('click', ()=>{
+      if(!history.length) return alert('Histórico já está vazio.');
+      if(confirm('Tem certeza que deseja apagar todo o histórico?')){ history=[]; saveHistory(); render(); }
+    });
+
+    // ====== Bulk select ======
+    byId('chkAll').addEventListener('change', (e)=>{ qsa('.rowChk').forEach(c=>c.checked=e.target.checked); });
+
+    // ====== Undo (apenas flashcards) ======
+    function undoHistory(id){
+      const h = history.find(x=>x.id===id); if(!h || h.kind!=='flashcard' || h.undoneAt) return;
+      const cIdx = cards.findIndex(x=>x.id===h.cardId);
+      if(cIdx<0) return alert('Card não encontrado para desfazer.');
+      if(!confirm('Desfazer esta revisão? Isso retorna o SRS do card ao estado anterior.')) return;
+      cards[cIdx].srs = {...(h.before||{})};
+      localStorage.setItem(LS_CARDS, JSON.stringify(cards));
+      h.undoneAt = Date.now(); saveHistory();
+      alert('Revisão desfeita.');
+      closeViewer(); render();
+    }
+
+    // ====== Theme init & first render ======
+    function init(){ render(); lucide.createIcons(); }
+    init();
+  </script>
+</body>
+</html>
