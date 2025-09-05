@@ -154,6 +154,97 @@ export const clearLessonActivity = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Export lesson activity log
+ * @route   GET /api/lessons/:id/activity/export
+ * @access  Private
+ */
+export const exportLessonActivity = asyncHandler(async (req, res) => {
+  const { id: lessonId } = req.params;
+  const userId = req.user.id;
+  const { format = 'json' } = req.query;
+
+  // Verify lesson access
+  const lessonCheck = await pool.query(
+    'SELECT id FROM lessons WHERE id = $1 AND user_id = $2 AND is_active = true',
+    [lessonId, userId]
+  );
+
+  if (lessonCheck.rows.length === 0) {
+    throw new AppError('Lesson not found or access denied', 404);
+  }
+
+  // Get activities
+  const result = await pool.query(`
+    SELECT 
+      id,
+      activity_type as type,
+      details,
+      duration_seconds as duration,
+      points_earned as points,
+      metadata as data,
+      created_at as timestamp
+    FROM lesson_activity_log
+    WHERE lesson_id = $1 AND user_id = $2
+    ORDER BY created_at DESC
+  `, [lessonId, userId]);
+
+  if (format === 'csv') {
+    const headers = ['id', 'type', 'details', 'duration_seconds', 'points_earned', 'timestamp', 'metadata'];
+    const csvRows = [headers.join(',')];
+    
+    result.rows.forEach(row => {
+      const values = [
+        row.id,
+        row.type,
+        `"${(row.details || '').replace(/"/g, '""')}"`,
+        row.duration || '',
+        row.points || 0,
+        new Date(row.timestamp).toISOString(),
+        `"${JSON.stringify(row.data || {}).replace(/"/g, '""')}"`
+      ];
+      csvRows.push(values.join(','));
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="lesson-${lessonId}-activity.csv"`);
+    res.send(csvRows.join('\n'));
+  } else {
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  }
+});
+
+/**
+ * @desc    Create lesson activity log entry
+ * @route   POST /api/lessons/:id/activity
+ * @access  Private
+ */
+export const createLessonActivity = asyncHandler(async (req, res) => {
+  const { id: lessonId } = req.params;
+  const userId = req.user.id;
+  const { activity_type, details, duration_seconds, points_earned, metadata } = req.body;
+
+  // Verify lesson access
+  const lessonCheck = await pool.query(
+    'SELECT id FROM lessons WHERE id = $1 AND user_id = $2 AND is_active = true',
+    [lessonId, userId]
+  );
+
+  if (lessonCheck.rows.length === 0) {
+    throw new AppError('Lesson not found or access denied', 404);
+  }
+
+  await logActivity(lessonId, userId, activity_type, details, duration_seconds, points_earned, metadata);
+
+  res.json({
+    success: true,
+    message: 'Activity logged successfully'
+  });
+});
+
+/**
  * @desc    Log activity (internal service function)
  * @param   {string} lessonId
  * @param   {string} userId

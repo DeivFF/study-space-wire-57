@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useActivity } from '@/hooks/useActivity';
+import { studyAPI } from '@/services/studyApi';
 import { format, startOfDay, endOfDay, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -20,24 +21,11 @@ interface HistoryTimelineProps {
 interface ActivityEntry {
   id: string;
   timestamp: string;
-  kind: 'flashcard' | 'exercise';
-  tipo: string;
-  pergunta: string;
-  tags: string[];
-  referencia: string;
-  // Flashcard specific
-  grade?: number;
-  before?: { ef: number; reps: number; ivl: number; due: number };
-  after?: { ef: number; reps: number; ivl: number; due: number };
-  respostaCurta?: string;
-  respostaAprofundada?: string;
-  // Exercise specific
-  result?: boolean;
-  timeSpent?: number;
-  difficulty?: string;
-  userAnswer?: string | number;
-  correctAnswer?: string;
-  options?: string[];
+  type: string;
+  details: string;
+  duration?: number;
+  points?: number;
+  data?: any;
 }
 
 interface Filters {
@@ -65,41 +53,8 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
     search: ''
   });
 
-  // Mock data for demonstration
-  const mockHistory: ActivityEntry[] = [
-    {
-      id: '1',
-      timestamp: new Date().toISOString(),
-      kind: 'flashcard',
-      tipo: 'conceito',
-      pergunta: 'O que é controle difuso de constitucionalidade?',
-      tags: ['constitucional', 'controle'],
-      referencia: 'CF/88, art. 97',
-      grade: 5,
-      before: { ef: 2.5, reps: 0, ivl: 0, due: Date.now() + 3 * 86400000 },
-      after: { ef: 2.5, reps: 1, ivl: 4, due: Date.now() + 7 * 86400000 },
-      respostaCurta: 'Qualquer juiz/tribunal afasta a lei no caso concreto.',
-      respostaAprofundada: 'É exercido incidentalmente; efeitos inter partes, salvo modulação pelo STF.'
-    },
-    {
-      id: '2',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      kind: 'exercise',
-      tipo: 'mcq',
-      pergunta: 'Nos termos da Lei 14.133/2021, qual o critério do menor preço?',
-      tags: ['licitações'],
-      referencia: 'Lei 14.133/2021',
-      result: true,
-      timeSpent: 48,
-      difficulty: 'médio',
-      userAnswer: 1,
-      correctAnswer: '1',
-      options: ['Preço global', 'Preço unitário quando previsto', 'Maior desconto', 'Técnica e preço sempre']
-    }
-  ];
-
   const getFilteredEntries = () => {
-    let filtered = mockHistory;
+    let filtered = activities;
 
     // Filter by date range
     if (filters.startDate) {
@@ -111,23 +66,12 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
       filtered = filtered.filter(entry => new Date(entry.timestamp) <= end);
     }
 
-    // Filter by kind
+    // Filter by kind (activity type)
     if (filters.kind !== 'all') {
-      filtered = filtered.filter(entry => entry.kind === filters.kind);
-    }
-
-    // Filter by tipo
-    if (filters.tipo !== 'all') {
-      filtered = filtered.filter(entry => entry.tipo === filters.tipo);
-    }
-
-    // Filter by grade
-    if (filters.grade !== 'all') {
-      if (filters.grade === '0') {
-        filtered = filtered.filter(entry => entry.grade !== undefined && entry.grade <= 2);
-      } else {
-        const grade = parseInt(filters.grade);
-        filtered = filtered.filter(entry => entry.grade === grade);
+      if (filters.kind === 'flashcard') {
+        filtered = filtered.filter(entry => entry.type.includes('flashcard'));
+      } else if (filters.kind === 'exercise') {
+        filtered = filtered.filter(entry => entry.type.includes('exercise'));
       }
     }
 
@@ -135,13 +79,12 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(entry =>
-        entry.pergunta.toLowerCase().includes(searchLower) ||
-        entry.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
-        entry.referencia.toLowerCase().includes(searchLower)
+        entry.details.toLowerCase().includes(searchLower) ||
+        (entry.data?.tags && entry.data.tags.some((tag: string) => tag.toLowerCase().includes(searchLower)))
       );
     }
 
-    return filtered;
+    return filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
   const setDateRange = (range: 'today' | '7' | '30' | 'all') => {
@@ -168,31 +111,89 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
     setFilters(prev => ({ ...prev, startDate, endDate }));
   };
 
-  const exportData = (format: 'json' | 'csv') => {
-    const data = getFilteredEntries();
-    
-    if (format === 'json') {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `historico-${lessonId}-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } else {
-      // CSV export logic would go here
-      console.log('CSV export not implemented yet');
+  const exportData = async (format: 'json' | 'csv') => {
+    try {
+      await studyAPI.exportLessonActivity(lessonId, format);
+    } catch (error) {
+      console.error('Error exporting data:', error);
     }
   };
 
   const filteredEntries = getFilteredEntries();
+  
+  // Calculate stats
   const stats = {
     total: filteredEntries.length,
     accuracy: filteredEntries.length > 0 ? 
-      Math.round((filteredEntries.filter(e => e.result === true || (e.grade && e.grade >= 3)).length / filteredEntries.length) * 100) : 0,
-    avgEF: filteredEntries.filter(e => e.after?.ef).length > 0 ?
-      (filteredEntries.filter(e => e.after?.ef).reduce((sum, e) => sum + (e.after?.ef || 0), 0) / filteredEntries.filter(e => e.after?.ef).length).toFixed(1) : '—'
+      Math.round((filteredEntries.filter(e => 
+        (e.type.includes('exercise') && e.data?.isCorrect) ||
+        (e.type.includes('flashcard') && (e.data?.grade || 0) >= 3)
+      ).length / filteredEntries.length) * 100) : 0,
+    avgEF: filteredEntries.filter(e => e.data?.after?.ef).length > 0 ?
+      (filteredEntries.filter(e => e.data?.after?.ef).reduce((sum, e) => sum + (e.data?.after?.ef || 0), 0) / 
+       filteredEntries.filter(e => e.data?.after?.ef).length).toFixed(1) : '—'
   };
+
+  const getActivityBadge = (entry: ActivityEntry) => {
+    if (entry.type.includes('exercise')) {
+      const isCorrect = entry.data?.isCorrect;
+      return (
+        <Badge className={`text-xs ${
+          isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {isCorrect ? 'Certo' : 'Errado'}
+        </Badge>
+      );
+    }
+    
+    if (entry.type.includes('flashcard')) {
+      const grade = entry.data?.grade || 0;
+      return (
+        <Badge className={`text-xs ${
+          grade >= 4 ? 'bg-green-100 text-green-800' :
+          grade === 3 ? 'bg-yellow-100 text-yellow-800' :
+          'bg-red-100 text-red-800'
+        }`}>
+          Nota {grade}
+        </Badge>
+      );
+    }
+
+    return <Badge variant="outline" className="text-xs">Atividade</Badge>;
+  };
+
+  const getMetaText = (entry: ActivityEntry) => {
+    if (entry.type.includes('exercise') && entry.data?.timeSpent) {
+      const timeSpent = entry.data.timeSpent;
+      const minutes = Math.floor(timeSpent / 60);
+      const seconds = timeSpent % 60;
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    if (entry.type.includes('flashcard') && entry.data?.after?.due) {
+      return `Próx: ${format(new Date(entry.data.after.due), 'dd/MM')}`;
+    }
+
+    if (entry.duration) {
+      const minutes = Math.floor(entry.duration / 60);
+      const seconds = entry.duration % 60;
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    return '—';
+  };
+
+  const getActivityType = (entry: ActivityEntry) => {
+    if (entry.type.includes('exercise')) return 'Exercício';
+    if (entry.type.includes('flashcard')) return 'Flashcard';
+    if (entry.type.includes('file')) return 'Arquivo';
+    if (entry.type.includes('note')) return 'Anotação';
+    return 'Atividade';
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8 text-app-text-muted">Carregando histórico...</div>;
+  }
 
   return (
     <div className="space-y-4">
@@ -270,42 +271,14 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
               onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
               className="text-sm bg-app-bg border-app-border"
             />
-            <div className="grid grid-cols-2 gap-2">
-              <Select value={filters.kind} onValueChange={(value: any) => setFilters(prev => ({ ...prev, kind: value }))}>
-                <SelectTrigger className="text-sm bg-app-bg border-app-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Conteúdo: Todos</SelectItem>
-                  <SelectItem value="flashcard">Flashcards</SelectItem>
-                  <SelectItem value="exercise">Exercícios</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={filters.tipo} onValueChange={(value: any) => setFilters(prev => ({ ...prev, tipo: value }))}>
-                <SelectTrigger className="text-sm bg-app-bg border-app-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tipo: Todos</SelectItem>
-                  <SelectItem value="conceito">Conceito</SelectItem>
-                  <SelectItem value="definição">Definição</SelectItem>
-                  <SelectItem value="caso">Caso</SelectItem>
-                  <SelectItem value="mcq">Múltipla escolha</SelectItem>
-                  <SelectItem value="essay">Dissertativo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Select value={filters.grade} onValueChange={(value: any) => setFilters(prev => ({ ...prev, grade: value }))}>
+            <Select value={filters.kind} onValueChange={(value: any) => setFilters(prev => ({ ...prev, kind: value }))}>
               <SelectTrigger className="text-sm bg-app-bg border-app-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Resultado/Nota</SelectItem>
-                <SelectItem value="5">Certo / Fácil (5)</SelectItem>
-                <SelectItem value="4">Bom (4)</SelectItem>
-                <SelectItem value="3">Difícil (3)</SelectItem>
-                <SelectItem value="0">Errado (0–2)</SelectItem>
+                <SelectItem value="all">Conteúdo: Todos</SelectItem>
+                <SelectItem value="flashcard">Flashcards</SelectItem>
+                <SelectItem value="exercise">Exercícios</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -337,61 +310,76 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
           </div>
           <div className="w-[120px] text-center">Conteúdo</div>
           <div className="w-[180px]">Data</div>
-          <div className="flex-1 min-w-0">Pergunta</div>
+          <div className="flex-1 min-w-0">Detalhes</div>
           <div className="w-[140px] text-center">Tipo</div>
-          <div className="w-[160px] text-center">Resultado/Nota</div>
-          <div className="w-[200px] text-center">Meta</div>
-          <div className="w-[140px] text-center">Ações</div>
+          <div className="w-[160px] text-center">Resultado</div>
+          <div className="w-[140px] text-center">Meta</div>
+          <div className="w-[100px] text-center">Ações</div>
         </div>
         <div className="divide-y divide-app-border">
-          {filteredEntries.map((entry) => (
-            <div key={entry.id} className="flex items-center px-3 py-3 hover:bg-app-bg-soft">
-              <div className="w-10 text-center">
-                <input type="checkbox" className="accent-app-accent" />
-              </div>
-              <div className="w-[120px] text-center">
-                <Badge className="text-xs">
-                  {entry.kind === 'flashcard' ? 'FC' : 'EX'}
-                </Badge>
-              </div>
-              <div className="w-[180px] text-sm text-app-text">
-                {format(new Date(entry.timestamp), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-              </div>
-              <div className="flex-1 min-w-0 text-sm text-app-text pr-4">
-                {entry.pergunta}
-              </div>
-              <div className="w-[140px] text-center">
-                <Badge variant="outline" className="text-xs">
-                  {entry.tipo}
-                </Badge>
-              </div>
-              <div className="w-[160px] text-center">
-                {entry.kind === 'flashcard' && entry.grade !== undefined && (
-                  <Badge className={`text-xs ${
-                    entry.grade >= 4 ? 'bg-green-100 text-green-800' :
-                    entry.grade === 3 ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    Nota {entry.grade}
+          {filteredEntries.length === 0 ? (
+            <div className="p-8 text-center text-app-text-muted">
+              Nenhuma atividade encontrada
+            </div>
+          ) : (
+            filteredEntries.map((entry) => (
+              <div key={entry.id} className="flex items-center px-3 py-3 hover:bg-app-bg-soft">
+                <div className="w-10 text-center">
+                  <input type="checkbox" className="accent-app-accent" />
+                </div>
+                <div className="w-[120px] text-center">
+                  <Badge className="text-xs">
+                    {getActivityType(entry)}
                   </Badge>
-                )}
-                {entry.kind === 'exercise' && (
-                  <Badge className={`text-xs ${
-                    entry.result ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {entry.result ? 'Certo' : 'Errado'}
+                </div>
+                <div className="w-[180px] text-sm text-app-text">
+                  {format(new Date(entry.timestamp), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                </div>
+                <div className="flex-1 min-w-0 text-sm text-app-text pr-4 truncate">
+                  {entry.details}
+                </div>
+                <div className="w-[140px] text-center">
+                  <Badge variant="outline" className="text-xs">
+                    {entry.data?.questionType || entry.type}
                   </Badge>
-                )}
+                </div>
+                <div className="w-[160px] text-center">
+                  {getActivityBadge(entry)}
+                </div>
+                <div className="w-[140px] text-center text-xs text-app-text-muted">
+                  {getMetaText(entry)}
+                </div>
+                <div className="w-[100px] text-center">
+                  <Button
+                    onClick={() => setViewModal({ isOpen: true, entry })}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="w-[200px] text-center text-xs text-app-text-muted">
-                {entry.kind === 'flashcard' && entry.after && (
-                  `EF: ${entry.after.ef.toFixed(1)} | Próx: ${format(new Date(entry.after.due), 'dd/MM')}`
-                )}
-                {entry.kind === 'exercise' && entry.timeSpent && (
-                  `${Math.floor(entry.timeSpent / 60)}:${(entry.timeSpent % 60).toString().padStart(2, '0')}`
-                )}
-              </div>
-              <div className="w-[140px] text-center">
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="lg:hidden space-y-3">
+        {filteredEntries.length === 0 ? (
+          <div className="border border-app-border rounded-xl p-8 text-center text-app-text-muted">
+            Nenhuma atividade encontrada
+          </div>
+        ) : (
+          filteredEntries.map((entry) => (
+            <div key={entry.id} className="border border-app-border rounded-xl p-4 bg-app-bg">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Badge className="text-xs">
+                    {getActivityType(entry)}
+                  </Badge>
+                  {getActivityBadge(entry)}
+                </div>
                 <Button
                   onClick={() => setViewModal({ isOpen: true, entry })}
                   variant="ghost"
@@ -400,40 +388,15 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
                   <Eye className="w-4 h-4" />
                 </Button>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Mobile Cards */}
-      <div className="lg:hidden space-y-3">
-        {filteredEntries.map((entry) => (
-          <div key={entry.id} className="border border-app-border rounded-xl p-4 bg-app-bg">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Badge className="text-xs">
-                  {entry.kind === 'flashcard' ? 'FC' : 'EX'}
-                </Badge>
-                <Badge variant="outline" className="text-xs">
-                  {entry.tipo}
-                </Badge>
+              <div className="text-sm font-medium text-app-text mb-1">
+                {entry.details}
               </div>
-              <Button
-                onClick={() => setViewModal({ isOpen: true, entry })}
-                variant="ghost"
-                size="sm"
-              >
-                <Eye className="w-4 h-4" />
-              </Button>
+              <div className="text-xs text-app-text-muted">
+                {format(new Date(entry.timestamp), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+              </div>
             </div>
-            <div className="text-sm font-medium text-app-text mb-1">
-              {entry.pergunta}
-            </div>
-            <div className="text-xs text-app-text-muted">
-              {format(new Date(entry.timestamp), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* View Entry Modal */}
@@ -442,7 +405,7 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5" />
-              Detalhes
+              Detalhes da Atividade
             </DialogTitle>
           </DialogHeader>
           
@@ -453,121 +416,34 @@ export const HistoryTimeline = ({ lessonId }: HistoryTimelineProps) => {
               </div>
               
               <div className="text-lg font-semibold text-app-text">
-                {viewModal.entry.pergunta}
+                {viewModal.entry.details}
               </div>
-
+              
               <div className="flex flex-wrap gap-2 items-center">
                 <Badge className="text-xs">
-                  {viewModal.entry.kind === 'flashcard' ? 'Flashcard' : 'Exercício'}
+                  {getActivityType(viewModal.entry)}
                 </Badge>
-                <Badge variant="outline" className="text-xs">
-                  {viewModal.entry.tipo}
-                </Badge>
-                {viewModal.entry.tags.map(tag => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-                <span className="text-xs text-app-text-muted">
-                  Ref.: {viewModal.entry.referencia}
-                </span>
+                {getActivityBadge(viewModal.entry)}
               </div>
 
-              {/* Flashcard Details */}
-              {viewModal.entry.kind === 'flashcard' && (
-                <div className="space-y-3">
-                  {viewModal.entry.before && viewModal.entry.after && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="border border-app-border rounded-lg p-3">
-                        <div className="text-xs text-app-text-muted">Antes</div>
-                        <div className="text-sm">
-                          EF: {viewModal.entry.before.ef} | Reps: {viewModal.entry.before.reps}
-                        </div>
-                      </div>
-                      <div className="border border-app-border rounded-lg p-3">
-                        <div className="text-xs text-app-text-muted">Depois</div>
-                        <div className="text-sm">
-                          EF: {viewModal.entry.after.ef} | Reps: {viewModal.entry.after.reps}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {viewModal.entry.grade !== undefined && (
-                    <div className="flex items-center gap-2">
-                      <Badge className={`text-xs ${
-                        viewModal.entry.grade >= 4 ? 'bg-green-100 text-green-800' :
-                        viewModal.entry.grade === 3 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        Nota: {viewModal.entry.grade}
-                      </Badge>
-                    </div>
-                  )}
-
-                  {viewModal.entry.respostaCurta && (
-                    <div>
-                      <div className="font-semibold mb-1 text-sm">Resposta curta</div>
-                      <div className="text-sm text-app-text-muted">{viewModal.entry.respostaCurta}</div>
-                    </div>
-                  )}
-
-                  {viewModal.entry.respostaAprofundada && (
-                    <div>
-                      <div className="font-semibold mb-1 text-sm">Resposta aprofundada</div>
-                      <div className="text-sm text-app-text-muted">{viewModal.entry.respostaAprofundada}</div>
-                    </div>
-                  )}
+              {viewModal.entry.data && (
+                <div className="border border-app-border rounded-lg p-3 bg-app-bg">
+                  <div className="font-semibold text-app-text mb-2">Dados da Atividade</div>
+                  <pre className="text-xs text-app-text-muted overflow-auto">
+                    {JSON.stringify(viewModal.entry.data, null, 2)}
+                  </pre>
                 </div>
               )}
 
-              {/* Exercise Details */}
-              {viewModal.entry.kind === 'exercise' && (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="border border-app-border rounded-lg p-3">
-                      <div className="text-xs text-app-text-muted">Resultado</div>
-                      <div className="text-sm">
-                        {viewModal.entry.result ? 'Correto' : 'Incorreto'}
-                      </div>
-                    </div>
-                    {viewModal.entry.timeSpent && (
-                      <div className="border border-app-border rounded-lg p-3">
-                        <div className="text-xs text-app-text-muted">Tempo</div>
-                        <div className="text-sm">
-                          {Math.floor(viewModal.entry.timeSpent / 60)}:{(viewModal.entry.timeSpent % 60).toString().padStart(2, '0')}
-                        </div>
-                      </div>
-                    )}
-                    {viewModal.entry.difficulty && (
-                      <div className="border border-app-border rounded-lg p-3">
-                        <div className="text-xs text-app-text-muted">Dificuldade</div>
-                        <div className="text-sm">{viewModal.entry.difficulty}</div>
-                      </div>
-                    )}
-                  </div>
+              {viewModal.entry.duration && (
+                <div className="text-sm text-app-text-muted">
+                  <span className="font-semibold">Duração:</span> {getMetaText(viewModal.entry)}
+                </div>
+              )}
 
-                  {viewModal.entry.options && (
-                    <div className="space-y-2">
-                      <div className="text-sm">
-                        <span className="font-semibold">Sua resposta:</span> {
-                          typeof viewModal.entry.userAnswer === 'number' 
-                            ? String.fromCharCode(65 + viewModal.entry.userAnswer)
-                            : viewModal.entry.userAnswer
-                        }
-                      </div>
-                      <div className="text-sm">
-                        <span className="font-semibold">Gabarito:</span> {viewModal.entry.correctAnswer}
-                      </div>
-                      <div className="text-sm space-y-1">
-                        {viewModal.entry.options.map((option, index) => (
-                          <div key={index}>
-                            {String.fromCharCode(65 + index)}) {option}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              {viewModal.entry.points && (
+                <div className="text-sm text-app-text-muted">
+                  <span className="font-semibold">Pontos:</span> {viewModal.entry.points}
                 </div>
               )}
             </div>

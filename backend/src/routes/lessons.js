@@ -22,7 +22,9 @@ import {
 } from '../controllers/exercisesController.js';
 import {
   getLessonActivity,
-  clearLessonActivity
+  clearLessonActivity,
+  exportLessonActivity,
+  createLessonActivity
 } from '../controllers/activityLogController.js';
 import { authenticateToken } from '../middleware/authenticateToken.js';
 import { validateRequest, studyValidationSchemas } from '../utils/studyValidation.js';
@@ -164,5 +166,19 @@ router.get('/:id/activity', getLessonActivity);
  * @access  Private
  */
 router.delete('/:id/activity', clearLessonActivity);
+
+/**
+ * @route   POST /api/lessons/:id/activity
+ * @desc    Create lesson activity log entry
+ * @access  Private
+ */
+router.post('/:id/activity', createLessonActivity);
+
+/**
+ * @route   GET /api/lessons/:id/activity/export
+ * @desc    Export lesson activity log
+ * @access  Private
+ */
+router.get('/:id/activity/export', exportLessonActivity);
 
 export default router;
