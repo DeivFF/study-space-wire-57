@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { X, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, SkipForward } from 'lucide-react';
 import { useExercises } from '@/hooks/useExercises';
-import { usePracticeSession } from '@/hooks/usePracticeSession';
-import { PracticeSessionStats } from './PracticeSessionStats';
-import { SessionConfigDialog } from './SessionConfigDialog';
+import { toast } from '@/components/ui/enhanced-toast';
 
 interface ExercisePracticeModalProps {
   isOpen: boolean;
@@ -20,272 +16,260 @@ interface ExercisePracticeModalProps {
   lessonTitle: string;
 }
 
+interface PracticeSession {
+  exercises: any[];
+  currentIndex: number;
+  answers: Record<string, any>;
+  completed: boolean;
+  startTime: number;
+}
+
 export const ExercisePracticeModal: React.FC<ExercisePracticeModalProps> = ({
   isOpen,
   onClose,
   lessonId,
-  lessonTitle,
+  lessonTitle
 }) => {
-  const { exercises, attemptExercise, isAttempting, lastAttemptResult } = useExercises(lessonId);
-  const { session, createSession, updateStats, nextItem, getCurrentItem, getProgress, endSession } = usePracticeSession();
-  
-  const [showConfig, setShowConfig] = useState(true);
-  const [showResults, setShowResults] = useState(false);
-  const [userAnswer, setUserAnswer] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [sessionStartTime, setSessionStartTime] = useState<number>(0);
-
-  const currentExercise = getCurrentItem();
-  const progress = getProgress();
+  const { exercises, attemptExercise, isAttempting } = useExercises(lessonId);
+  const [session, setSession] = useState<PracticeSession | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [showResult, setShowResult] = useState(false);
+  const [lastResult, setLastResult] = useState<{ correct: boolean; explanation?: string } | null>(null);
 
   useEffect(() => {
-    if (!isOpen) {
-      setShowConfig(true);
-      setShowResults(false);
-      setUserAnswer('');
-      setShowFeedback(false);
-      endSession();
-    }
-  }, [isOpen, endSession]);
-
-  const handleStartSession = (limit: number) => {
-    if (exercises.length === 0) {
-      return;
-    }
-
-    createSession({
-      lessonId,
-      type: 'exercises',
-      limit,
-    }, exercises);
-
-    setShowConfig(false);
-    setSessionStartTime(Date.now());
-  };
-
-  const handleSubmitAnswer = async () => {
-    if (!currentExercise || !userAnswer.trim()) return;
-
-    const timeSpent = Math.floor((Date.now() - sessionStartTime) / 1000);
-
-    try {
-      await attemptExercise({
-        exerciseId: currentExercise.id,
-        userAnswer: userAnswer.trim(),
-        timeSpent,
+    if (isOpen && exercises.length > 0 && !session) {
+      setSession({
+        exercises: exercises.slice(0, 10), // Limit to 10 exercises
+        currentIndex: 0,
+        answers: {},
+        completed: false,
+        startTime: Date.now()
       });
-
-      setShowFeedback(true);
-    } catch (error) {
-      console.error('Error submitting answer:', error);
+    } else if (isOpen && exercises.length === 0) {
+      toast.info('Nenhum exercício disponível');
+      onClose();
     }
-  };
-
-  const handleNextExercise = () => {
-    if (!lastAttemptResult) return;
-
-    updateStats(lastAttemptResult.correct);
-
-    const hasNext = nextItem();
-    if (!hasNext) {
-      setShowResults(true);
-    } else {
-      setUserAnswer('');
-      setShowFeedback(false);
-      setSessionStartTime(Date.now());
-    }
-  };
+  }, [isOpen, exercises, session, onClose]);
 
   const handleClose = () => {
-    endSession();
+    setSession(null);
+    setSelectedAnswer('');
+    setShowResult(false);
+    setLastResult(null);
     onClose();
   };
 
-  const handleRestart = () => {
-    setShowResults(false);
-    setShowConfig(true);
-    endSession();
+  const handleAnswer = async () => {
+    if (!session || !selectedAnswer.trim()) return;
+
+    const currentExercise = session.exercises[session.currentIndex];
+    
+    try {
+      const result = await attemptExercise({
+        exerciseId: currentExercise.id,
+        userAnswer: selectedAnswer,
+        timeSpent: Math.round((Date.now() - session.startTime) / 1000)
+      });
+
+      setLastResult(result);
+      setShowResult(true);
+
+      // Update session with answer
+      const newAnswers = { ...session.answers };
+      newAnswers[currentExercise.id] = {
+        answer: selectedAnswer,
+        correct: result.correct,
+        explanation: result.explanation
+      };
+
+      setSession({
+        ...session,
+        answers: newAnswers
+      });
+
+    } catch (error) {
+      toast.error('Erro ao enviar resposta');
+    }
   };
 
-  const renderExerciseContent = () => {
-    if (!currentExercise) return null;
+  const handleNext = () => {
+    if (!session) return;
 
-    const isMultipleChoice = currentExercise.question_type === 'multiple_choice';
-    const isTrueFalse = currentExercise.question_type === 'true_false';
-    const isEssay = currentExercise.question_type === 'essay';
-
-    if (isMultipleChoice && Array.isArray(currentExercise.options)) {
-      return (
-        <RadioGroup value={userAnswer} onValueChange={setUserAnswer}>
-          {currentExercise.options.map((option: string, index: number) => (
-            <div key={index} className="flex items-center space-x-2">
-              <RadioGroupItem value={option} id={`option-${index}`} />
-              <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer">
-                {option}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      );
+    const nextIndex = session.currentIndex + 1;
+    
+    if (nextIndex >= session.exercises.length) {
+      // Session completed
+      const correctAnswers = Object.values(session.answers).filter((a: any) => a.correct).length;
+      const total = Object.keys(session.answers).length;
+      const accuracy = Math.round((correctAnswers / total) * 100);
+      
+      toast.success(`Sessão concluída! ${correctAnswers}/${total} acertos (${accuracy}%)`);
+      handleClose();
+    } else {
+      setSession({
+        ...session,
+        currentIndex: nextIndex
+      });
+      setSelectedAnswer('');
+      setShowResult(false);
+      setLastResult(null);
     }
-
-    if (isTrueFalse) {
-      return (
-        <RadioGroup value={userAnswer} onValueChange={setUserAnswer}>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="0" id="true" />
-            <Label htmlFor="true" className="cursor-pointer">Verdadeiro</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="1" id="false" />
-            <Label htmlFor="false" className="cursor-pointer">Falso</Label>
-          </div>
-        </RadioGroup>
-      );
-    }
-
-    if (isEssay) {
-      return (
-        <Textarea
-          value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
-          placeholder="Digite sua resposta..."
-          className="min-h-[120px]"
-        />
-      );
-    }
-
-    return null;
   };
 
-  if (!isOpen) return null;
+  if (!session) return null;
+
+  const currentExercise = session.exercises[session.currentIndex];
+  const progress = ((session.currentIndex + 1) / session.exercises.length) * 100;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0">
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
-            <div>
-              <h2 className="text-xl font-semibold">Prática de Exercícios</h2>
-              <p className="text-sm text-muted-foreground">{lessonTitle}</p>
-            </div>
-            <Button variant="ghost" size="sm" onClick={handleClose}>
-              <X className="w-4 h-4" />
-            </Button>
+      <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle className="flex items-center justify-between">
+            <span>Prática de Exercícios - {lessonTitle}</span>
+            <Badge variant="secondary">
+              {session.currentIndex + 1} de {session.exercises.length}
+            </Badge>
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="flex-1 flex flex-col gap-4">
+          {/* Progress Bar */}
+          <Progress value={progress} className="w-full" />
+
+          {/* Exercise Content */}
+          <div className="flex-1">
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-4">{currentExercise.title}</h3>
+                
+                <div className="mb-6">
+                  <div 
+                    className="text-base leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: currentExercise.question_text }}
+                  />
+                </div>
+
+                {/* Answer Options */}
+                <div className="space-y-3">
+                  {currentExercise.question_type === 'multiple_choice' && currentExercise.options && (
+                    <div className="space-y-2">
+                      {currentExercise.options.map((option: string, index: number) => (
+                        <label 
+                          key={index} 
+                          className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                            selectedAnswer === index.toString() ? 'border-primary bg-primary/5' : 'border-border'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="answer"
+                            value={index.toString()}
+                            checked={selectedAnswer === index.toString()}
+                            onChange={(e) => setSelectedAnswer(e.target.value)}
+                            className="mr-3"
+                            disabled={showResult}
+                          />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  {(currentExercise.question_type === 'true_false' || currentExercise.question_type === 'truefalse') && (
+                    <div className="space-y-2">
+                      {['Verdadeiro', 'Falso'].map((option, index) => (
+                        <label 
+                          key={index} 
+                          className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                            selectedAnswer === index.toString() ? 'border-primary bg-primary/5' : 'border-border'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="answer"
+                            value={index.toString()}
+                            checked={selectedAnswer === index.toString()}
+                            onChange={(e) => setSelectedAnswer(e.target.value)}
+                            className="mr-3"
+                            disabled={showResult}
+                          />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  {currentExercise.question_type === 'essay' && (
+                    <Textarea
+                      placeholder="Digite sua resposta..."
+                      value={selectedAnswer}
+                      onChange={(e) => setSelectedAnswer(e.target.value)}
+                      disabled={showResult}
+                      rows={5}
+                    />
+                  )}
+                </div>
+
+                {/* Result Display */}
+                {showResult && lastResult && (
+                  <div className={`mt-6 p-4 rounded-lg border ${
+                    lastResult.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      {lastResult.correct ? (
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-600" />
+                      )}
+                      <span className={`font-semibold ${
+                        lastResult.correct ? 'text-green-800' : 'text-red-800'
+                      }`}>
+                        {lastResult.correct ? 'Resposta Correta!' : 'Resposta Incorreta'}
+                      </span>
+                    </div>
+                    
+                    {lastResult.explanation && (
+                      <div className="text-sm text-gray-700">
+                        <strong>Explicação:</strong> {lastResult.explanation}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Configuration */}
-          {showConfig && (
-            <SessionConfigDialog
-              type="exercises"
-              totalItems={exercises.length}
-              onStart={handleStartSession}
-              onCancel={handleClose}
-            />
-          )}
-
-          {/* Practice Session */}
-          {session && !showConfig && !showResults && (
-            <div className="flex-1 flex flex-col">
-              {/* Progress */}
-              <div className="p-6 border-b">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">
-                    {progress.current} de {progress.total} exercícios
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {session.stats.accuracy}% de acerto
-                  </span>
-                </div>
-                <Progress value={progress.percentage} className="w-full" />
-              </div>
-
-              {/* Exercise */}
-              <div className="flex-1 overflow-auto p-6">
-                {currentExercise && (
-                  <Card className="w-full max-w-3xl mx-auto">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">
-                          {currentExercise.title}
-                        </CardTitle>
-                        <Badge variant="outline">
-                          {currentExercise.difficulty || 'Médio'}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="prose prose-sm max-w-none">
-                        <p>{currentExercise.question_text}</p>
-                      </div>
-
-                      {!showFeedback ? (
-                        <div className="space-y-4">
-                          {renderExerciseContent()}
-                          
-                          <div className="flex justify-end pt-4">
-                            <Button 
-                              onClick={handleSubmitAnswer}
-                              disabled={!userAnswer.trim() || isAttempting}
-                              className="min-w-[120px]"
-                            >
-                              {isAttempting ? (
-                                <Clock className="w-4 h-4 mr-2 animate-spin" />
-                              ) : null}
-                              Responder
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {/* Feedback */}
-                          <div className={`p-4 rounded-lg border ${
-                            lastAttemptResult?.correct 
-                              ? 'bg-green-50 border-green-200' 
-                              : 'bg-red-50 border-red-200'
-                          }`}>
-                            <div className="flex items-center gap-2 mb-2">
-                              {lastAttemptResult?.correct ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" />
-                              ) : (
-                                <XCircle className="w-5 h-5 text-red-600" />
-                              )}
-                              <span className="font-medium">
-                                {lastAttemptResult?.correct ? 'Correto!' : 'Incorreto'}
-                              </span>
-                            </div>
-                            
-                            {lastAttemptResult?.explanation && (
-                              <p className="text-sm text-gray-700">
-                                {lastAttemptResult.explanation}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="flex justify-end">
-                            <Button onClick={handleNextExercise}>
-                              {progress.current < progress.total ? 'Próximo' : 'Finalizar'}
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center">
+            <Button variant="outline" onClick={handleClose}>
+              Encerrar Sessão
+            </Button>
+            
+            <div className="flex gap-2">
+              {!showResult ? (
+                <Button 
+                  onClick={handleAnswer} 
+                  disabled={!selectedAnswer.trim() || isAttempting}
+                  className="min-w-[120px]"
+                >
+                  {isAttempting ? (
+                    <>
+                      <Clock className="w-4 h-4 mr-2 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Responder'
+                  )}
+                </Button>
+              ) : (
+                <Button onClick={handleNext} className="min-w-[120px]">
+                  <SkipForward className="w-4 h-4 mr-2" />
+                  {session.currentIndex + 1 >= session.exercises.length ? 'Finalizar' : 'Próximo'}
+                </Button>
+              )}
             </div>
-          )}
-
-          {/* Results */}
-          {showResults && session && (
-            <PracticeSessionStats
-              stats={session.stats}
-              type="exercises"
-              onRestart={handleRestart}
-              onClose={handleClose}
-            />
-          )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -73,6 +73,7 @@ export const ExerciseBank = ({ lessonId }: ExerciseBankProps) => {
       }
 
       await createExercise({
+        lesson_id: lessonId,
         title: newExercise.question_text.substring(0, 50) + '...',
         question_text: newExercise.question_text,
         question_type: newExercise.question_type,

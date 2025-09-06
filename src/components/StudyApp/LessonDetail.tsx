@@ -339,8 +339,9 @@ export function LessonDetail() {
         content: '',
         updated_at: new Date().toISOString(),
         createdAt: Date.now(),
-        updatedAt: Date.now(),
-        tags: []
+          updatedAt: Date.now(),
+          updated_at: new Date().toISOString(),
+          tags: []
       };
       
       const updatedNotes = [...notes, newNote];
