@@ -1,0 +1,157 @@
+/* Feed-specific styles to ensure proper theming */
+
+/* Ensure proper scrollbar styling */
+.feed-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.feed-sidebar::-webkit-scrollbar-track {
+  background: hsl(var(--app-muted));
+}
+
+.feed-sidebar::-webkit-scrollbar-thumb {
+  background: hsl(var(--app-border));
+  border-radius: 3px;
+}
+
+.feed-sidebar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--app-text-muted));
+}
+
+/* Animation for panels */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Responsive utilities */
+@media (max-width: 1024px) {
+  .feed-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .feed-sidebar {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: 40;
+  }
+  
+  .feed-sidebar-left {
+    left: 0;
+  }
+  
+  .feed-sidebar-right {
+    right: 0;
+  }
+}
+
+/* Focus styles for accessibility */
+.feed-button:focus-visible {
+  outline: 2px solid hsl(var(--app-accent));
+  outline-offset: 2px;
+}
+
+/* Status indicator pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-online {
+  animation: pulse 2s infinite;
+}
+
+/* Badge styles */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: hsl(var(--app-danger));
+  color: white;
+  font-size: 10px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}

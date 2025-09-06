@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PGPASSWORD=admin123 psql -h localhost -p 5432 -U postgres -d azurk -c \"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''messages'' ORDER BY ordinal_position;\")",
+      "Bash(PGPASSWORD=admin123 psql -h localhost -p 5432 -U postgres -d azurk -c \"SELECT cp.conversation_id, cp.user_id, cp.is_muted, cp.last_read_at, u.name FROM conversation_participants cp JOIN users u ON cp.user_id = u.id;\")",
+      "Bash(PGPASSWORD=admin123 psql -h localhost -p 5432 -U postgres -d azurk -c \"SELECT m.id, m.conversation_id, m.content, m.sender_id, u.name FROM messages m JOIN users u ON m.sender_id = u.id LIMIT 5;\")",
+      "Bash(PGPASSWORD=admin123 psql -h localhost -p 5432 -U postgres -d azurk -c \"SELECT COUNT(*) as total_reads FROM message_reads;\")",
+      "Bash(PGPASSWORD=admin123 psql:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

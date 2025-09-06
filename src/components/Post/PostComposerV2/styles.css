@@ -1,0 +1,356 @@
+/* PostComposerV2 Styles - Matching original HTML design */
+
+.composer-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--app-border));
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  margin-bottom: 16px;
+}
+
+.dark .composer-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.composer-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid hsl(var(--app-border));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.composer-header:hover {
+  background: hsl(var(--app-muted) / 0.5);
+}
+
+.composer-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: hsl(var(--app-text));
+}
+
+.composer-body {
+  padding: 14px;
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 12px;
+  border-top: 1px solid hsl(var(--app-border));
+  background: color-mix(in oklch, hsl(var(--app-bg)) 60%, hsl(var(--app-panel)));
+  border-radius: 0 0 16px 16px;
+}
+
+/* Type Switch */
+.type-switch {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--app-border));
+  background: hsl(var(--app-bg));
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: hsl(var(--app-text));
+}
+
+.chip:hover {
+  background: hsl(var(--app-muted));
+}
+
+.chip.active {
+  background: color-mix(in oklch, hsl(var(--app-accent)) 12%, hsl(var(--app-bg)));
+  color: hsl(var(--app-accent));
+  border-color: color-mix(in oklch, hsl(var(--app-accent)) 40%, hsl(var(--app-border)));
+}
+
+/* Forms */
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+}
+
+.field-anon {
+  min-width: 220px;
+}
+
+.field label {
+  font-size: 12px;
+  color: hsl(var(--app-text-muted));
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid hsl(var(--app-border));
+  border-radius: 10px;
+  background: hsl(var(--app-bg-soft));
+  color: hsl(var(--app-text));
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: hsl(var(--app-accent));
+}
+
+textarea.input {
+  min-height: 110px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Texto form specific */
+.texto-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: hsl(var(--app-muted));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: hsl(var(--app-text));
+  flex-shrink: 0;
+}
+
+.texto-textarea {
+  flex: 1;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid hsl(var(--app-border));
+  border-radius: 10px;
+  background: hsl(var(--app-bg-soft));
+  color: hsl(var(--app-text));
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.texto-textarea::placeholder {
+  color: hsl(var(--app-text-muted));
+}
+
+.texto-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: hsl(var(--app-text-muted));
+  font-size: 12px;
+}
+
+.char-counter {
+  color: hsl(var(--app-text-muted));
+  font-size: 12px;
+}
+
+/* Buttons */
+.btn {
+  border: 1px solid transparent;
+  background: color-mix(in oklch, hsl(var(--app-bg)) 60%, hsl(var(--app-panel)));
+  color: hsl(var(--app-text));
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: hsl(var(--app-border));
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: hsl(var(--app-text-muted));
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: hsl(var(--app-muted));
+  color: hsl(var(--app-text));
+}
+
+/* Options */
+.poll-options,
+.ex-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.option-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.drag {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--app-muted));
+  color: hsl(var(--app-text-muted));
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.option-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--app-muted));
+  font-weight: 600;
+  color: hsl(var(--app-text));
+  flex-shrink: 0;
+}
+
+.poll-controls,
+.ex-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.poll-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.poll-duration select {
+  width: 140px;
+}
+
+/* Footer */
+.footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hint {
+  font-size: 12px;
+  color: hsl(var(--app-text-muted));
+  flex: 1;
+}
+
+/* Utils */
+.flex-1 {
+  flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .field-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .field-anon {
+    min-width: auto;
+  }
+  
+  .type-switch {
+    flex-wrap: wrap;
+  }
+  
+  .composer-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .footer-actions {
+    justify-content: space-between;
+  }
+  
+  .poll-controls {
+    flex-wrap: wrap;
+  }
+  
+  .poll-duration {
+    margin-left: 0;
+  }
+}

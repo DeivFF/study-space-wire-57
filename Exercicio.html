@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson Detail – Versão HTML</title>
+
+  <!-- Tailwind CDN (JIT) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        container: {
+          center: true,
+          padding: '2rem',
+          screens: { '2xl': '1400px' }
+        },
+        extend: {
+          colors: {
+            border: 'hsl(var(--border))',
+            input: 'hsl(var(--input))',
+            ring: 'hsl(var(--ring))',
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+            secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+            destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+            muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+            accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+            popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
+            card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+            sidebar: {
+              DEFAULT: 'hsl(var(--sidebar-background))', foreground: 'hsl(var(--sidebar-foreground))',
+              primary: 'hsl(var(--sidebar-primary))', 'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+              accent: 'hsl(var(--sidebar-accent))', 'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+              border: 'hsl(var(--sidebar-border))', ring: 'hsl(var(--sidebar-ring))'
+            },
+            app: {
+              bg: 'hsl(var(--app-bg))', 'bg-soft': 'hsl(var(--app-bg-soft))', panel: 'hsl(var(--app-panel))',
+              muted: 'hsl(var(--app-muted))', border: 'hsl(var(--app-border))', text: 'hsl(var(--app-text))',
+              'text-muted': 'hsl(var(--app-text-muted))', accent: 'hsl(var(--app-accent))', 'accent-2': 'hsl(var(--app-accent-2))',
+              success: 'hsl(var(--app-success))', warning: 'hsl(var(--app-warning))', danger: 'hsl(var(--app-danger))'
+            }
+          },
+          borderRadius: {
+            lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)'
+          },
+          keyframes: {
+            'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
+            'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } }
+          },
+          animation: {
+            'accordion-down': 'accordion-down 0.2s ease-out',
+            'accordion-up': 'accordion-up 0.2s ease-out'
+          }
+        }
+      },
+      plugins: []
+    }
+  </script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Design tokens baseados no seu design */
+      --background: 215 20% 97%;
+      --foreground: 220 18% 8%;
+      --card: 0 0% 100%;
+      --card-foreground: 220 18% 8%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 220 18% 8%;
+      --primary: 218 100% 50%;
+      --primary-foreground: 0 0% 100%;
+      --secondary: 220 29% 95%;
+      --secondary-foreground: 220 18% 8%;
+      --muted: 220 29% 95%;
+      --muted-foreground: 218 12% 40%;
+      --accent: 198 100% 50%;
+      --accent-foreground: 0 0% 100%;
+      --destructive: 4 84% 51%;
+      --destructive-foreground: 0 0% 100%;
+      --border: 225 22% 89%;
+      --input: 225 22% 89%;
+      --ring: 218 100% 50%;
+      --radius: 14px;
+
+      /* Sidebar tokens */
+      --sidebar-background: 215 20% 97%;
+      --sidebar-foreground: 220 18% 8%;
+      --sidebar-primary: 218 100% 50%;
+      --sidebar-primary-foreground: 0 0% 100%;
+      --sidebar-accent: 220 29% 95%;
+      --sidebar-accent-foreground: 220 18% 8%;
+      --sidebar-border: 225 22% 89%;
+      --sidebar-ring: 218 100% 50%;
+
+      /* Tokens específicos do Study Space */
+      --app-bg: 215 20% 97%;
+      --app-bg-soft: 0 0% 100%;
+      --app-panel: 0 0% 100%;
+      --app-muted: 220 29% 95%;
+      --app-border: 225 22% 89%;
+      --app-text: 220 18% 8%;
+      --app-text-muted: 218 12% 40%;
+      --app-accent: 218 100% 50%;
+      --app-accent-2: 198 100% 50%;
+      --app-success: 140 71% 32%;
+      --app-warning: 45 100% 36%;
+      --app-danger: 4 84% 51%;
+      --app-shadow: 218 50% 15%;
+      --app-radius: 14px;
+      --gradient-primary: linear-gradient(90deg, hsl(var(--app-accent)), hsl(var(--app-accent-2)));
+      --gradient-subtle: linear-gradient(180deg, hsl(var(--app-bg)), hsl(var(--app-muted)));
+    }
+
+    .dark {
+      --background: 222 25% 4%;
+      --foreground: 220 12% 90%;
+      --card: 222 24% 6%;
+      --card-foreground: 220 12% 90%;
+      --popover: 222 24% 6%;
+      --popover-foreground: 220 12% 90%;
+      --primary: 217 98% 70%;
+      --primary-foreground: 222 25% 4%;
+      --secondary: 223 24% 11%;
+      --secondary-foreground: 220 12% 90%;
+      --muted: 223 24% 11%;
+      --muted-foreground: 219 14% 71%;
+      --accent: 199 100% 75%;
+      --accent-foreground: 222 25% 4%;
+      --destructive: 4 100% 68%;
+      --destructive-foreground: 0 0% 100%;
+      --border: 225 24% 20%;
+      --input: 225 24% 20%;
+      --ring: 217 98% 70%;
+      --sidebar-background: 222 25% 4%;
+      --sidebar-foreground: 220 12% 90%;
+      --sidebar-primary: 217 98% 70%;
+      --sidebar-primary-foreground: 222 25% 4%;
+      --sidebar-accent: 223 24% 11%;
+      --sidebar-accent-foreground: 220 12% 90%;
+      --sidebar-border: 225 24% 20%;
+      --sidebar-ring: 217 98% 70%;
+      --app-bg: 222 25% 4%;
+      --app-bg-soft: 221 17% 7%;
+      --app-panel: 222 24% 6%;
+      --app-muted: 223 24% 11%;
+      --app-border: 225 24% 20%;
+      --app-text: 220 12% 90%;
+      --app-text-muted: 219 14% 71%;
+      --app-accent: 217 98% 70%;
+      --app-accent-2: 199 100% 75%;
+      --app-success: 140 54% 60%;
+      --app-warning: 45 100% 50%;
+      --app-danger: 4 100% 68%;
+      --app-shadow: 0 0% 0%;
+    }
+
+    body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.35; }
+    .gradient-primary { background: var(--gradient-primary); }
+    .btn-cta { background: var(--gradient-primary); color: #fff; font-weight: 600; }
+    .shadow-study { box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+    .dark .shadow-study { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); }
+    .tab-trigger[data-active="true"] { background-color: hsl(var(--app-bg-soft)); color: hsl(var(--app-text)); font-weight: 600; }
+    .tab-trigger { background-color: hsl(var(--app-bg)); color: hsl(var(--app-text-muted)); }
+    .modal-backdrop { background: rgba(0,0,0,.45); }
+    .badge { display:inline-flex; align-items:center; gap:.375rem; padding:.125rem .5rem; font-size:.75rem; border-radius:999px; border:1px solid hsl(var(--app-border)); background: hsl(var(--app-bg)); color: hsl(var(--app-text)); }
+  </style>
+</head>
+
+<body class="min-h-full bg-background text-foreground">
+  <div class="container max-w-6xl py-8">
+    <!-- Top bar -->
+    <div class="flex items-center gap-3 mb-4 px-3">
+      <button id="btnBack" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+      </button>
+      <div id="lessonTitle" class="text-lg font-semibold text-app-text">Título da Aula</div>
+      <div class="flex-1"></div>
+      <div id="lessonMeta" class="text-sm text-app-text-muted">Médio • Progresso 42% • Acerto 88%</div>
+      <button id="toggleTheme" class="ml-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" title="Alternar tema">
+        <i data-lucide="moon" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div class="bg-app-bg-soft border border-app-border rounded-2xl shadow-sm overflow-hidden">
+      <!-- Tabs header -->
+      <div class="w-full flex flex-wrap bg-transparent border-b border-app-border p-0 gap-1">
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="files">Arquivos</button>
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="notes">Anotações</button>
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="flashcards">Flashcards</button>
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="exercises">Exercícios</button>
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="history">Histórico</button>
+        <button class="tab-trigger px-4 py-3 rounded-t-xl border border-b-0 border-app-border" data-tab="stats">Estatísticas</button>
+      </div>
+
+      <!-- Tabs content -->
+      <div id="tab-files" class="p-4 space-y-4">
+        <!-- Dropzone -->
+        <div id="dropzone" class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 border-app-border bg-app-bg hover:border-blue-400 hover:bg-blue-50/50">
+          <input id="fileInput" type="file" class="hidden" multiple accept=".pdf,.mp3,.m4a,.wav,.ogg,.png,.jpg,.jpeg,.gif,.webp" />
+          <div class="flex flex-col items-center gap-3">
+            <i data-lucide="upload" class="w-8 h-8 text-app-text-muted"></i>
+            <div class="text-app-text-muted">Arraste e solte arquivos aqui, ou</div>
+            <button id="btnSelectFiles" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+              <i data-lucide="paperclip" class="w-4 h-4"></i> Selecionar arquivos
+            </button>
+            <div class="text-xs text-app-text-muted">Suporte: PDF, MP3, M4A, WAV, PNG, JPG (máx. 50MB)</div>
+          </div>
+        </div>
+        <!-- Header list -->
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-app-text">Arquivos anexados</h3>
+          <div class="flex items-center gap-3">
+            <input id="filterInput" placeholder="Filtrar..." class="w-48 px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text" />
+            <span class="text-sm text-app-text-muted"><span id="fileCount">0</span> itens</span>
+          </div>
+        </div>
+        <!-- Files table (desktop) -->
+        <div class="hidden lg:block">
+          <div class="border-t border-app-border">
+            <div class="flex items-center px-3 py-2.5 text-xs text-app-text-muted border-b border-app-border">
+              <div class="flex-1 min-w-0">Recurso</div>
+              <div class="w-[100px] text-center">Tipo</div>
+              <div class="w-[120px] text-center">Disciplina</div>
+              <div class="w-[100px] text-center">Atualizado</div>
+              <div class="w-[80px] text-center">Tamanho</div>
+              <div class="w-[140px] text-center">Ações</div>
+            </div>
+            <div id="fileRowsDesktop"></div>
+          </div>
+        </div>
+        <!-- Files list (mobile) -->
+        <div class="lg:hidden border-t border-app-border" id="fileRowsMobile"></div>
+      </div>
+
+      <div id="tab-notes" class="hidden p-4 space-y-4">
+        <div class="flex items-center gap-3">
+          <button class="btn-cta px-3 py-2 rounded-lg flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Nova anotação
+          </button>
+          <input placeholder="Buscar anotações..." class="flex-1 px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text" />
+        </div>
+        <!-- Editor avançado de anotações -->
+        <div class="border border-app-border rounded-xl bg-app-bg overflow-hidden">
+          <div class="flex items-center justify-between px-3 py-2 border-b border-app-border bg-app-muted">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="h1" title="Título H1"><span class="font-bold">H1</span></button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="h2" title="Título H2"><span class="font-semibold">H2</span></button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="bold" title="Negrito"><span class="font-bold">B</span></button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="italic" title="Itálico"><span class="italic">I</span></button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="ul" title="Lista">• Lista</button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="check" title="Checklist">☑︎</button>
+              <button class="toolbar-btn px-2 py-1 rounded hover:bg-app-bg" data-action="code" title="Código"><code>&lt;/&gt;</code></button>
+            </div>
+            <div class="text-xs text-app-text-muted" id="autosaveState">Salvo</div>
+          </div>
+          <textarea id="notesArea" class="w-full min-h-[320px] p-4 outline-none resize-y bg-transparent text-app-text" placeholder="Escreva anotações em Markdown…"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2">
+          <button id="btnExportNotes" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+            <i data-lucide="download" class="w-4 h-4"></i> Exportar .md
+          </button>
+          <button class="btn-cta px-3 py-2 rounded-lg flex items-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Salvar
+          </button>
+        </div>
+      </div>
+
+      <div id="tab-flashcards" class="hidden p-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-app-text">Gerenciar flashcards</h3>
+          <div class="flex items-center gap-3">
+            <input placeholder="Buscar cartões..." class="w-48 px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text" />
+            <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+              <i data-lucide="plus" class="w-4 h-4"></i> Novo cartão
+            </button>
+          </div>
+        </div>
+        <div class="border-t border-app-border pt-4">
+          <h4 class="text-lg font-semibold text-app-text mb-3">Realizar flashcards</h4>
+          <div class="flex items-center gap-3 mb-4">
+            <button class="btn-cta px-3 py-2 rounded-lg flex items-center gap-2">
+              <i data-lucide="play" class="w-4 h-4"></i> Iniciar sessão
+            </button>
+            <span class="text-sm text-app-text-muted">Você tem <span class="font-semibold" id="cardsDue">12</span> cards para hoje.</span>
+          </div>
+          <div class="border border-dashed border-app-border rounded-xl p-8 text-center bg-app-bg min-h-[160px] flex items-center justify-center">
+            <div class="text-app-text-muted">Nenhuma sessão ativa.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======= SEÇÃO EXERCÍCIOS (MINIMAL) ======= -->
+<div id="tab-exercises" class="hidden p-4 space-y-4">
+  <!-- Header + único botão -->
+  <div class="flex items-center justify-between">
+    <h3 class="text-lg font-semibold text-app-text">Banco de exercícios</h3>
+    <button id="btnNewEx" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg btn-cta">
+      <i data-lucide="plus" class="w-4 h-4"></i> Novo exercício
+    </button>
+  </div>
+
+  <!-- Lista simples -->
+  <div id="exList" class="border border-app-border rounded-xl overflow-hidden divide-y divide-app-border">
+    <!-- linhas via JS -->
+  </div>
+
+  <!-- Modal: visualizar e responder -->
+  <div id="exModalPlay" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 modal-backdrop"></div>
+    <div class="relative w-[95vw] sm:w-[90vw] max-w-2xl bg-card text-card-foreground rounded-2xl border border-app-border">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-app-border">
+        <div class="flex items-center gap-2"><i data-lucide="eye" class="w-5 h-5"></i><span>Exercício</span></div>
+        <button id="exPlayClose" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="p-4 space-y-4">
+        <div id="exPlayStmt" class="text-[15px]"></div>
+        <div id="exPlayOpts" class="space-y-2"></div>
+        <div id="exPlayEssayBox" class="hidden">
+          <textarea id="exPlayEssay" class="w-full min-h-[120px] p-3 rounded-lg bg-app-bg border border-app-border text-app-text" placeholder="Digite sua resposta..."></textarea>
+        </div>
+        <div class="flex items-center justify-between pt-2">
+          <button id="exPlayShow" class="px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">Mostrar gabarito</button>
+          <div class="flex items-center gap-2">
+            <button id="exPlayPrev" class="px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">Anterior</button>
+            <button id="exPlayNext" class="btn-cta px-3 py-2 rounded-lg">Próxima</button>
+          </div>
+        </div>
+        <div id="exPlayExpl" class="hidden rounded-lg border border-app-border p-3 text-sm">
+          <div class="font-semibold mb-1">Explicação</div>
+          <div id="exPlayExplText">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: novo exercício (condicional sem tags/nível/disciplina) -->
+  <div id="exModalNew" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 modal-backdrop"></div>
+    <div class="relative w-[95vw] sm:w-[90vw] max-w-2xl bg-card text-card-foreground rounded-2xl border border-app-border">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-app-border">
+        <div class="flex items-center gap-2"><i data-lucide="file-plus" class="w-5 h-5"></i><span>Novo exercício</span></div>
+        <button id="exNewClose" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="p-4 space-y-3">
+        <div>
+          <label class="block text-xs text-app-text-muted mb-1">Tipo</label>
+          <select id="fType" class="w-full px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text">
+            <option value="mcq">Múltipla escolha</option>
+            <option value="truefalse">Verdadeiro/Falso</option>
+            <option value="essay">Dissertativa</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-app-text-muted mb-1">Enunciado</label>
+          <textarea id="fStmt" class="w-full min-h-[120px] p-3 rounded-lg bg-app-bg border border-app-border text-app-text" placeholder="Digite o enunciado"></textarea>
+        </div>
+        <div id="fOptions" class="space-y-2"><!-- render dinâmico --></div>
+        <div>
+          <label class="block text-xs text-app-text-muted mb-1">Explicação (opcional)</label>
+          <textarea id="fExpl" class="w-full min-h-[100px] p-3 rounded-lg bg-app-bg border border-app-border text-app-text" placeholder="Comentário / fundamentação"></textarea>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 px-4 py-3 border-t border-app-border">
+        <button id="exNewSave" class="btn-cta px-4 py-2 rounded-lg inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const $ = (s, el=document)=>el.querySelector(s);
+      const $$ = (s, el=document)=>Array.from(el.querySelectorAll(s));
+      const open = (m)=>{ $(m).classList.remove('hidden'); $(m).classList.add('flex'); };
+      const close = (m)=>{ $(m).classList.add('hidden'); $(m).classList.remove('flex'); };
+
+      // Dataset mínimo
+      let items = [
+        {id:crypto.randomUUID(), type:'mcq', statement:'(FGV/2023) Sobre os princípios da Administração Pública, assinale a alternativa correta.', options:['Impessoalidade permite promoção pessoal.','Moralidade exige conduta ética e legal.','O princípio da eficiência não está na CF/88.','Publicidade é regra absoluta.'], answer:1, expl:'A moralidade administrativa exige probidade e finalidade pública (art. 37, caput).', updatedAt: Date.now()},
+        {id:crypto.randomUUID(), type:'truefalse', statement:'(AOCP/2022) Direitos fundamentais possuem aplicabilidade imediata.', options:['Verdadeiro','Falso'], answer:0, expl:'Art. 5º, §1º, CF/88: aplicabilidade imediata.', updatedAt: Date.now()},
+        {id:crypto.randomUUID(), type:'essay', statement:'Explique o princípio da publicidade e suas exceções.', options:[], answer:0, expl:'Publicidade é regra; sigilo quando imprescindível à segurança do Estado e da sociedade.', updatedAt: Date.now()}
+      ];
+      let cursor = 0;
+
+      function row(it){
+        return `<div class=\"flex items-center gap-3 p-3\">
+          <div class=\"flex-1 min-w-0\">
+            <div class=\"text-sm text-app-text truncate\">${it.statement}</div>
+          </div>
+          <button class=\"px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted\" data-act=\"play\" data-id=\"${it.id}\"><i data-lucide=\"eye\" class=\"w-4 h-4\"></i></button>
+          <button class=\"px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted\" data-act=\"delete\" data-id=\"${it.id}\"><i data-lucide=\"trash-2\" class=\"w-4 h-4\"></i></button>
+        </div>`;
+      }
+
+      function renderList(){
+        const box = $('#exList');
+        box.innerHTML = items.map(row).join('');
+        if (window.lucide) lucide.createIcons();
+        $$('#exList [data-act]').forEach(btn=>btn.addEventListener('click', (e)=>{
+          const id = e.currentTarget.getAttribute('data-id');
+          const act = e.currentTarget.getAttribute('data-act');
+          const it = items.find(x=>x.id===id);
+          if(!it) return;
+          if(act==='play'){ cursor = items.indexOf(it); openPlay(it); }
+          if(act==='delete'){ if(confirm('Excluir este exercício?')){ items = items.filter(x=>x.id!==id); renderList(); }}
+        }));
+      }
+
+      // Modal play
+      function openPlay(it){
+        $('#exPlayStmt').textContent = it.statement;
+        $('#exPlayExpl').classList.add('hidden');
+        $('#exPlayExplText').textContent = it.expl||'—';
+        const box = $('#exPlayOpts'); box.innerHTML='';
+        $('#exPlayEssayBox').classList.add('hidden');
+        if(it.type==='essay'){
+          $('#exPlayEssayBox').classList.remove('hidden');
+        } else if(it.type==='truefalse'){
+          ['Verdadeiro','Falso'].forEach((op,i)=>{
+            const b=document.createElement('button');
+            b.className='w-full text-left px-3 py-2 rounded-lg border border-app-border hover:bg-app-muted';
+            b.innerHTML=`<span class=\"font-semibold\">${i===0?'V':'F'}.</span> ${op}`;
+            b.addEventListener('click', ()=> grade(it, i));
+            box.appendChild(b);
+          });
+        } else { // mcq
+          it.options.forEach((op,i)=>{
+            const b=document.createElement('button');
+            b.className='w-full text-left px-3 py-2 rounded-lg border border-app-border hover:bg-app-muted';
+            b.innerHTML=`<span class=\"font-semibold\">${String.fromCharCode(65+i)}.</span> ${op}`;
+            b.addEventListener('click', ()=> grade(it, i));
+            box.appendChild(b);
+          });
+        }
+        open('#exModalPlay');
+      }
+
+      function grade(it, chosenIdx){
+        $('#exPlayExpl').classList.remove('hidden');
+        if(it.type==='essay') return; // sem correção automática
+        const ok = chosenIdx===it.answer;
+        const btns = $$('#exPlayOpts button');
+        btns.forEach((b,i)=>{
+          if(i===it.answer) b.classList.add('border-green-500');
+          if(i===chosenIdx && !ok) b.classList.add('border-red-500');
+        });
+      }
+
+      // Navegação modal
+      $('#exPlayShow').addEventListener('click', ()=> $('#exPlayExpl').classList.toggle('hidden'));
+      $('#exPlayClose').addEventListener('click', ()=> close('#exModalPlay'));
+      $('#exPlayPrev').addEventListener('click', ()=>{ if(cursor>0){ cursor--; openPlay(items[cursor]); }});
+      $('#exPlayNext').addEventListener('click', ()=>{ if(cursor<items.length-1){ cursor++; openPlay(items[cursor]); }});
+
+      // Modal novo (condicional)
+      function renderFormByType(){
+        const type = $('#fType').value;
+        const box = $('#fOptions');
+        box.innerHTML='';
+        if(type==='essay'){
+          // sem alternativas
+        } else if(type==='truefalse'){
+          box.innerHTML=`
+            <div class=\"text-sm text-app-text-muted\">Gabarito</div>
+            <label class=\"flex items-center gap-2\"><input type=\"radio\" name=\"tf\" value=\"0\" checked> Verdadeiro</label>
+            <label class=\"flex items-center gap-2\"><input type=\"radio\" name=\"tf\" value=\"1\"> Falso</label>`;
+        } else {
+          box.innerHTML=`
+            <div class=\"text-sm text-app-text-muted\">Alternativas (marque a correta)</div>
+            ${['A','B','C','D'].map((l,i)=>
+              `<label class=\"flex gap-2 items-start\">
+                <input type=\"radio\" name=\"mcq\" value=\"${i}\" class=\"mt-1\" ${i===0?'checked':''}>
+                <textarea data-opt-index=\"${i}\" class=\"flex-1 px-3 py-2 rounded-lg bg-app-bg border border-app-border text-app-text\" placeholder=\"Alternativa ${l}\"></textarea>
+              </label>`
+            ).join('')}`;
+        }
+      }
+      $('#fType').addEventListener('change', renderFormByType);
+
+      function saveNew(){
+        const type = $('#fType').value;
+        const statement = $('#fStmt').value.trim();
+        const expl = $('#fExpl').value.trim();
+        if(!statement){ alert('Digite o enunciado.'); return; }
+        let options=[], answer=0;
+        if(type==='mcq'){
+          const areas = $$('textarea[data-opt-index]');
+          options = areas.map(a=>a.value.trim()).filter(Boolean);
+          if(options.length<2){ alert('Informe pelo menos duas alternativas.'); return; }
+          answer = Number(($('input[name=\"mcq\"]:checked')||{}).value||0);
+        } else if(type==='truefalse'){
+          options=['Verdadeiro','Falso'];
+          answer = Number(($('input[name=\"tf\"]:checked')||{}).value||0);
+        } else {
+          options=[]; answer=0;
+        }
+        items.unshift({id:crypto.randomUUID(), type, statement, options, answer, expl, updatedAt: Date.now()});
+        renderList();
+        close('#exModalNew');
+      }
+
+      // Binds
+      $('#btnNewEx').addEventListener('click', ()=>{ $('#fType').value='mcq'; $('#fStmt').value=''; $('#fExpl').value=''; renderFormByType(); open('#exModalNew'); });
+      $('#exNewSave').addEventListener('click', saveNew);
+      $('#exNewClose').addEventListener('click', ()=> close('#exModalNew'));
+
+      // Start
+      renderList(); if(window.lucide) lucide.createIcons();
+    })();
+  </script>
+</div>
+<!-- ======= /SEÇÃO EXERCÍCIOS (MINIMAL) ======= -->
+
+      <div id="tab-history" class="hidden p-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-app-text">Linha do tempo da aula</h3>
+          <div class="flex items-center gap-3">
+            <select class="px-3 py-2 border border-app-border rounded-lg bg-app-bg text-app-text">
+              <option value="all">Todos</option>
+              <option value="file">Arquivos</option>
+              <option value="note">Anotações</option>
+              <option value="flashcard">Flashcards</option>
+              <option value="exercise">Exercícios</option>
+              <option value="audio">Áudio</option>
+            </select>
+            <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+              <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar (local)
+            </button>
+          </div>
+        </div>
+        <div class="border border-app-border rounded-xl p-4 bg-app-bg text-sm text-app-text-muted text-center py-8">Log de atividade (placeholder)</div>
+      </div>
+
+      <div id="tab-stats" class="hidden p-4 space-y-4">
+        <div class="flex items-baseline gap-3">
+          <h3 class="text-lg font-semibold text-app-text">Estatísticas da aula</h3>
+          <span class="text-sm text-app-text-muted">consolidadas do histórico</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="check" class="w-5 h-5 text-app-text"></i>
+              <span class="font-semibold text-app-text">Exercícios</span>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-app-text-muted">Feitos</span><span class="font-semibold text-app-text">0</span></div>
+              <div class="w-full bg-app-muted rounded-full h-2"><div class="h-2 rounded-full" style="width:0%; background: var(--gradient-primary);"></div></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Acertos</span><span class="text-app-text">0</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Erros</span><span class="text-app-text">0</span></div>
+            </div>
+          </div>
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-app-text"></i>
+              <span class="font-semibold text-app-text">Flashcards</span>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-app-text-muted">Feitos</span><span class="font-semibold text-app-text">0</span></div>
+              <div class="w-full bg-app-muted rounded-full h-2"><div class="h-2 rounded-full" style="width:0%; background: var(--gradient-primary);"></div></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Acertos</span><span class="text-app-text">0</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Erros</span><span class="text-app-text">0</span></div>
+            </div>
+          </div>
+          <div class="border border-app-border rounded-xl p-4 bg-app-bg">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="eye" class="w-5 h-5 text-app-text"></i>
+              <span class="font-semibold text-app-text">Outras métricas</span>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-app-text-muted">Arquivos anexados</span><span class="text-app-text" id="metricFiles">0</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Áudios reproduzidos</span><span class="text-app-text">0</span></div>
+              <div class="flex justify-between"><span class="text-app-text-muted">Anotações criadas</span><span class="text-app-text" id="metricNotes">1</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Preview Modal (dos Arquivos) -->
+  <div id="previewModal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 modal-backdrop"></div>
+    <div class="relative w-[95vw] sm:w-[90vw] max-w-5xl max-h-[90vh] overflow-y-auto bg-card text-card-foreground rounded-2xl border border-app-border">
+      <div class="sticky top-0 z-10 flex items-center justify-between gap-3 px-4 py-3 border-b border-app-border bg-app-panel/80 backdrop-blur">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <i id="previewIcon" data-lucide="file-text" class="w-5 h-5 shrink-0"></i>
+          <span id="previewTitle" class="truncate text-sm sm:text-base">Arquivo</span>
+        </div>
+        <button id="btnClosePreview" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted">
+          <i data-lucide="x" class="w-4 h-4"></i> Fechar
+        </button>
+      </div>
+      <div id="previewBody" class="p-4"></div>
+    </div>
+  </div>
+
+  <script>
+    // Icons
+    lucide.createIcons();
+
+    // Simple state
+    const state = {
+      lesson: { title: 'Direito Administrativo – Aula 03', difficulty: 'medio', progress: 42, accuracy: 88 },
+      files: [], // {id, name, type, size, uploadedAt, blobUrl}
+    };
+
+    // Utils
+    const qs = (s, el=document) => el.querySelector(s);
+    const qsa = (s, el=document) => Array.from(el.querySelectorAll(s));
+    const byId = id => document.getElementById(id);
+    const fmtDate = d => new Date(d).toLocaleDateString();
+    const formatSize = bytes => {
+      if (bytes == null) return '-';
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024, sizes = ['Bytes','KB','MB','GB'];
+      const i = Math.floor(Math.log(bytes)/Math.log(k));
+      return `${(bytes/Math.pow(k,i)).toFixed(2)} ${sizes[i]}`;
+    }
+    function getTypeFromFile(file){
+      const t = (file.type || '').toLowerCase();
+      if (t.includes('pdf')) return 'pdf';
+      if (t.includes('audio')) return 'audio';
+      if (t.includes('image')) return 'image';
+      return 'file';
+    }
+
+    function updateHeader(){
+      byId('lessonTitle').textContent = state.lesson.title;
+      const diffMap = { facil: 'Fácil', medio: 'Médio', dificil: 'Difícil' };
+      byId('lessonMeta').textContent = `${diffMap[state.lesson.difficulty]||state.lesson.difficulty} • Progresso ${state.lesson.progress}% • Acerto ${state.lesson.accuracy}%`;
+    }
+
+    function renderFiles(){
+      const filter = byId('filterInput').value?.toLowerCase() || '';
+      const items = state.files.filter(f => f.name.toLowerCase().includes(filter));
+      byId('fileCount').textContent = items.length;
+      byId('metricFiles').textContent = state.files.length;
+
+      // desktop rows
+      const desktop = byId('fileRowsDesktop');
+      desktop.innerHTML = '';
+      items.forEach(file => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center px-3 py-2.5 border-b border-app-border hover:bg-app-muted';
+        row.innerHTML = `
+          <div class="flex-1 flex items-center gap-2 min-w-0">
+            <i data-lucide="${iconFor(file.type)}" class="w-4 h-4 shrink-0 text-app-text"></i>
+            <div class="font-semibold truncate text-app-text flex items-center gap-2">${file.name}</div>
+          </div>
+          <div class="w-[100px] text-center text-sm text-app-text">${labelFor(file.type)}</div>
+          <div class="w-[120px] text-center text-sm text-app-text">Geral</div>
+          <div class="w-[100px] text-center text-sm text-app-text-muted">${fmtDate(file.uploadedAt)}</div>
+          <div class="w-[80px] text-center text-sm text-app-text-muted">${formatSize(file.size)}</div>
+          <div class="w-[140px] flex justify-center gap-1">
+            <button class="px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-action="preview" data-id="${file.id}"><i data-lucide="eye" class="w-4 h-4"></i></button>
+            <a class="px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" href="${file.blobUrl}" download="${file.name}"><i data-lucide="download" class="w-4 h-4"></i></a>
+            <button class="px-2 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-action="delete" data-id="${file.id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>`;
+        desktop.appendChild(row);
+      });
+
+      // mobile rows
+      const mobile = byId('fileRowsMobile');
+      mobile.innerHTML = '';
+      items.forEach(file => {
+        const card = document.createElement('div');
+        card.className = 'px-3 py-3 border-b border-app-border hover:bg-app-muted';
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <i data-lucide="${iconFor(file.type)}" class="w-5 h-5 mt-0.5 text-app-text"></i>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm leading-tight mb-1 text-app-text">${file.name}</div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="badge">${labelFor(file.type)}</span>
+                <span class="text-xs text-app-text-muted">Geral</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-xs text-app-text-muted">
+                <div class="flex items-center gap-2">
+                  <span>${fmtDate(file.uploadedAt)}</span>
+                  <span>• ${formatSize(file.size)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-3 ml-8">
+            <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-action="preview" data-id="${file.id}"><i data-lucide="eye" class="w-4 h-4"></i>Preview</button>
+            <a class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" href="${file.blobUrl}" download="${file.name}"><i data-lucide="download" class="w-4 h-4"></i>Baixar</a>
+            <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-app-border text-app-text hover:bg-app-muted" data-action="delete" data-id="${file.id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>`;
+        mobile.appendChild(card);
+      });
+
+      lucide.createIcons();
+
+      // bind preview/delete
+      qsa('[data-action="preview"]').forEach(b=>b.addEventListener('click', e=>{
+        const id = e.currentTarget.getAttribute('data-id');
+        const file = state.files.find(f=>f.id===id);
+        openPreview(file);
+      }));
+      qsa('[data-action="delete"]').forEach(b=>b.addEventListener('click', e=>{
+        const id = e.currentTarget.getAttribute('data-id');
+        const idx = state.files.findIndex(f=>f.id===id);
+        if (idx>-1) { URL.revokeObjectURL(state.files[idx].blobUrl); state.files.splice(idx,1); renderFiles(); }
+      }));
+    }
+
+    function iconFor(t){ return ({ pdf:'file-text', audio:'headphones', image:'image', html:'code', site:'globe', file:'file'})[t]||'file'; }
+    function labelFor(t){ return ({ pdf:'PDF', audio:'Áudio', image:'Imagem', html:'HTML', site:'Site', file:'Arquivo'})[t]||t.toUpperCase(); }
+
+    // Tabs
+    const tabButtons = qsa('.tab-trigger');
+    const tabPanels = ['files','notes','flashcards','exercises','history','stats'].map(id=>byId(`tab-${id}`));
+    function activateTab(name){
+      tabButtons.forEach(b=>b.setAttribute('data-active', String(b.dataset.tab===name)));
+      tabPanels.forEach(p=>p.classList.toggle('hidden', !p.id.endsWith(name)));
+      window.location.hash = name; // deep-link
+    }
+    tabButtons.forEach(b=>b.addEventListener('click', ()=>activateTab(b.dataset.tab)));
+
+    // Theme toggle
+    byId('toggleTheme').addEventListener('click', ()=>{
+      const root = document.documentElement;
+      root.classList.toggle('dark');
+      localStorage.setItem('lesson-theme', root.classList.contains('dark') ? 'dark' : 'light');
+    });
+    if(localStorage.getItem('lesson-theme')==='dark') document.documentElement.classList.add('dark');
+
+    // Dropzone
+    const dropzone = byId('dropzone');
+    const fileInput = byId('fileInput');
+    byId('btnSelectFiles').addEventListener('click', ()=>fileInput.click());
+    fileInput.addEventListener('change', handleFiles);
+    ;['dragenter','dragover'].forEach(evt=>dropzone.addEventListener(evt, e=>{
+      e.preventDefault(); e.stopPropagation();
+      dropzone.classList.add('border-blue-400','bg-blue-50','scale-[1.02]');
+    }));
+    ;['dragleave','drop'].forEach(evt=>dropzone.addEventListener(evt, e=>{
+      e.preventDefault(); e.stopPropagation();
+      dropzone.classList.remove('border-blue-400','bg-blue-50','scale-[1.02]');
+    }));
+    dropzone.addEventListener('drop', e=>{
+      const files = Array.from(e.dataTransfer.files||[]);
+      addFiles(files);
+    });
+
+    function handleFiles(e){
+      addFiles(Array.from(e.target.files||[]));
+      e.target.value='';
+    }
+    function addFiles(files){
+      const maxSize = 50*1024*1024; // 50MB
+      const accepted = ['application/pdf','audio/','image/'];
+      files.forEach(f=>{
+        if (f.size>maxSize) { alert(`Arquivo excede 50MB: ${f.name}`); return; }
+        if (!accepted.some(a=>f.type.startsWith(a))) { alert(`Tipo não suportado: ${f.name}`); return; }
+        const id = crypto.randomUUID();
+        const blobUrl = URL.createObjectURL(f);
+        state.files.push({ id, name: f.name, type: getTypeFromFile(f), size: f.size, uploadedAt: Date.now(), blobUrl });
+      });
+      renderFiles();
+    }
+
+    // Preview modal (Arquivos)
+    const previewModal = byId('previewModal');
+    const previewBody = byId('previewBody');
+    const previewTitle = byId('previewTitle');
+    const previewIcon = byId('previewIcon');
+    byId('btnClosePreview').addEventListener('click', closePreview);
+    previewModal.addEventListener('click', (e)=>{ if(e.target===previewModal) closePreview(); });
+
+    function openPreview(file){
+      previewTitle.textContent = file.name;
+      previewIcon.setAttribute('data-lucide', iconFor(file.type));
+      lucide.createIcons();
+      previewBody.innerHTML = '';
+      let el;
+      if (file.type==='pdf') {
+        el = document.createElement('div');
+        el.innerHTML = `
+          <div class="p-4 bg-app-panel border border-app-border rounded-xl">
+            <div class="font-semibold mb-3 text-app-text">Preview do PDF</div>
+            <div class="bg-white border border-app-border rounded-lg overflow-hidden">
+              <iframe src="${file.blobUrl}#toolbar=1&navpanes=1&scrollbar=1" class="w-full h-[70vh] border-0" title="Preview: ${file.name}"></iframe>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <a href="${file.blobUrl}" download="${file.name}" class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg btn-cta"><i data-lucide="download" class="w-4 h-4"></i>Baixar arquivo</a>
+            </div>
+          </div>`;
+      } else if (file.type==='audio') {
+        el = document.createElement('div');
+        el.innerHTML = `
+          <div class="p-4 bg-app-panel border border-app-border rounded-xl">
+            <div class="font-semibold mb-3 text-app-text">Preview de Áudio</div>
+            <audio controls src="${file.blobUrl}" class="w-full"></audio>
+          </div>`;
+      } else if (file.type==='image') {
+        el = document.createElement('div');
+        el.innerHTML = `
+          <div class="border border-app-border rounded-xl overflow-hidden bg-app-muted">
+            <img src="${file.blobUrl}" alt="${file.name}" class="w-full max-h-[70vh] object-contain" />
+          </div>`;
+      } else {
+        el = document.createElement('div');
+        el.innerHTML = `
+          <div class="p-8 text-center text-app-text-muted">
+            <i data-lucide="file" class="w-12 h-12 mx-auto mb-2"></i>
+            Preview não disponível para este tipo de arquivo
+          </div>`;
+      }
+      previewBody.appendChild(el);
+      lucide.createIcons();
+      previewModal.classList.remove('hidden');
+      previewModal.classList.add('flex');
+    }
+    function closePreview(){
+      previewModal.classList.add('hidden');
+      previewModal.classList.remove('flex');
+      previewBody.innerHTML = '';
+    }
+
+    // Notes toolbar (markdown helpers)
+    const notesArea = byId('notesArea');
+    const autosaveState = byId('autosaveState');
+    qsa('.toolbar-btn').forEach(btn=>btn.addEventListener('click', ()=>applyMarkdown(btn.dataset.action)));
+    notesArea?.addEventListener('input', ()=>{
+      autosaveState.textContent = 'Salvando…';
+      clearTimeout(window.__saveTimer);
+      window.__saveTimer = setTimeout(()=>{ autosaveState.textContent = 'Salvo'; }, 500);
+    });
+    function applyMarkdown(action){
+      const start = notesArea.selectionStart;
+      const end = notesArea.selectionEnd;
+      const val = notesArea.value;
+      const sel = val.slice(start,end)||'texto';
+      let rep = sel;
+      if(action==='bold') rep = `**${sel}**`;
+      else if(action==='italic') rep = `*${sel}*`;
+      else if(action==='h1') rep = `# ${sel}`;
+      else if(action==='h2') rep = `## ${sel}`;
+      else if(action==='ul') rep = `- ${sel}`;
+      else if(action==='check') rep = `- [ ] ${sel}`;
+      else if(action==='code') rep = `\`${sel}\``;
+      notesArea.setRangeText(rep, start, end, 'end');
+      notesArea.dispatchEvent(new Event('input'));
+      notesArea.focus();
+    }
+
+    // Export notes
+    byId('btnExportNotes').addEventListener('click', ()=>{
+      const blob = new Blob([notesArea.value||'' ], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'anotacoes.md'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Filter
+    byId('filterInput').addEventListener('input', renderFiles);
+
+    // Init
+    updateHeader();
+    activateTab(location.hash?.replace('#','') || 'files');
+    renderFiles();
+  </script>
+</body>
+</html>
